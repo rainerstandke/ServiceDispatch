@@ -10,11 +10,14 @@
 		D5042F6F20D0621B007F0A5D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5042F6B20D0621A007F0A5D /* Main.storyboard */; };
 		D5042F7020D0621B007F0A5D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5042F6D20D0621B007F0A5D /* LaunchScreen.storyboard */; };
 		D5042F7220D0878A007F0A5D /* CDNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5042F7120D0878A007F0A5D /* CDNavigationController.swift */; };
+		D5042F7920D09AC6007F0A5D /* CDRequestsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5042F7720D09AC5007F0A5D /* CDRequestsViewController.swift */; };
+		D5042F7A20D09AC6007F0A5D /* CDAddEditRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5042F7820D09AC5007F0A5D /* CDAddEditRequestViewController.swift */; };
 		D5C7089B20D03E56001FD1C1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C7089A20D03E56001FD1C1 /* AppDelegate.swift */; };
 		D5C708A220D03E58001FD1C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5C708A120D03E58001FD1C1 /* Assets.xcassets */; };
 		D5C708AF20D046D4001FD1C1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D5C708AE20D046D4001FD1C1 /* GoogleService-Info.plist */; };
 		D5C708B420D0553F001FD1C1 /* UIViewController+Alerts.m in Sources */ = {isa = PBXBuildFile; fileRef = D5C708B320D0553F001FD1C1 /* UIViewController+Alerts.m */; };
 		D5C708B620D05569001FD1C1 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5C708B520D05569001FD1C1 /* SignInViewController.swift */; };
+		D5F242B520D1CDB10023071B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F242B420D1CDB10023071B /* Constants.swift */; };
 		F7F73468D7900447A666BA47 /* Pods_CuddleDispatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D68C1A73712B8F2ED865355B /* Pods_CuddleDispatch.framework */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +27,8 @@
 		D5042F6C20D0621A007F0A5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D5042F6E20D0621B007F0A5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D5042F7120D0878A007F0A5D /* CDNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDNavigationController.swift; sourceTree = "<group>"; };
+		D5042F7720D09AC5007F0A5D /* CDRequestsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDRequestsViewController.swift; sourceTree = "<group>"; };
+		D5042F7820D09AC5007F0A5D /* CDAddEditRequestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDAddEditRequestViewController.swift; sourceTree = "<group>"; };
 		D5C7089720D03E56001FD1C1 /* CuddleDispatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CuddleDispatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5C7089A20D03E56001FD1C1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D5C708A120D03E58001FD1C1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -33,6 +38,7 @@
 		D5C708B220D0553E001FD1C1 /* UIViewController+Alerts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Alerts.h"; sourceTree = "<group>"; };
 		D5C708B320D0553F001FD1C1 /* UIViewController+Alerts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Alerts.m"; sourceTree = "<group>"; };
 		D5C708B520D05569001FD1C1 /* SignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		D5F242B420D1CDB10023071B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		D68C1A73712B8F2ED865355B /* Pods_CuddleDispatch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CuddleDispatch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -91,8 +97,11 @@
 				D5C7089A20D03E56001FD1C1 /* AppDelegate.swift */,
 				D5C708B520D05569001FD1C1 /* SignInViewController.swift */,
 				D5042F7120D0878A007F0A5D /* CDNavigationController.swift */,
+				D5042F7720D09AC5007F0A5D /* CDRequestsViewController.swift */,
+				D5042F7820D09AC5007F0A5D /* CDAddEditRequestViewController.swift */,
 				D5C708B220D0553E001FD1C1 /* UIViewController+Alerts.h */,
 				D5C708B320D0553F001FD1C1 /* UIViewController+Alerts.m */,
+				D5F242B420D1CDB10023071B /* Constants.swift */,
 			);
 			path = CuddleDispatch;
 			sourceTree = "<group>";
@@ -240,9 +249,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D5C708B620D05569001FD1C1 /* SignInViewController.swift in Sources */,
+				D5042F7A20D09AC6007F0A5D /* CDAddEditRequestViewController.swift in Sources */,
 				D5C708B420D0553F001FD1C1 /* UIViewController+Alerts.m in Sources */,
+				D5042F7920D09AC6007F0A5D /* CDRequestsViewController.swift in Sources */,
 				D5042F7220D0878A007F0A5D /* CDNavigationController.swift in Sources */,
 				D5C7089B20D03E56001FD1C1 /* AppDelegate.swift in Sources */,
+				D5F242B520D1CDB10023071B /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
