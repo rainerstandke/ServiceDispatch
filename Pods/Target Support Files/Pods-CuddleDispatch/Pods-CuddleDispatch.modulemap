@@ -1,0 +1,6 @@
+framework module Pods_CuddleDispatch {
+  umbrella header "Pods-CuddleDispatch-umbrella.h"
+
+  export *
+  module * { export * }
+}
