@@ -28,7 +28,7 @@ class Request: NSObject {
 	var ageGroup: String
 	var priority: String
 	var expirationDate: String? // set when first created, not updated when edited
-	//	var inProgress: Bool // TODO: implement
+	//	var status: Enum? // TODO: implement inProgress, recently done (with automatic sunset 4 hrs later?)
 	var stationPrefix: String
 	
 	init(dbKey: String, station: String, nurse: String, carePartner: String, ageGroup: String, priority: String) {
@@ -44,17 +44,17 @@ class Request: NSObject {
 	
 	
 	init?(snapshot: DataSnapshot) {
-		// this assumes a snapshot for the individual item
+		// this expects a snapshot for one individual request
+		
 		guard let dict = snapshot.value as? [String:Any] else { return nil }
 		
-		guard let dbKey  = dict["dbKey"] as? String  else { return nil }
 		guard let station = dict["station"]  as? String else { return nil }
 		guard let nurse = dict["nurse"]  as? String else { return nil }
 		guard let carePartner = dict["carePartner"]  as? String else { return nil }
 		guard let ageGroup = dict["ageGroup"]  as? String else { return nil }
 		guard let priority = dict["priority"]  as? String else { return nil }
 		
-		self.dbKey = dbKey
+		self.dbKey = snapshot.key
 		self.station = station
 		self.nurse = nurse
 		self.carePartner = carePartner

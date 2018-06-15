@@ -13,7 +13,6 @@ import Firebase
 class CDRequestsViewController: UIViewController {
 	
 	
-	var dataSource: RequestDataSource?
 	
 	var sectionTitles = [String]()
 	
@@ -26,13 +25,7 @@ class CDRequestsViewController: UIViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		
-		reqTableVu.register(CDRequestTableViewCell.self, forCellReuseIdentifier: K.CellIDs.requestCellID)
-		
-		dataSource = RequestDataSource(query: dbRef, populateCell: { (tableView, indexPath, snapShot) -> UITableViewCell in
-			
-		})
+
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -40,42 +33,34 @@ class CDRequestsViewController: UIViewController {
 		
 		// TODO: filter for only not yet expired
 		
-		var reqArr = [Request]()
 		requestsRef.observe(.value) { [unowned self] (snapshot) in
-			let reqDict = snapshot.value as? [String: [String: String]] ?? [:]
+			guard let snapArray = snapshot.children.allObjects as? [DataSnapshot] else { fatalError("could not get DataSnapshots") }
+			self.processRequestsSnapshots(snapArray)
 			
-			reqDict.forEach { (dbKey, valuesDict) in
-				guard let newRequest = Request(dbKey: dbKey, valuesDict: valuesDict) else { return }
-				reqArr.append(newRequest)
-			}
-			
-			self.generateSectionInfo(for: reqArr)
-			
-			self.reqTableVu.reloadData()
+			self.reqTableVu.reloadData() // b/c async
 		}
 	}
 	
-	func generateSectionInfo(for requests: [Request]) {
-		let prefixSet = Set(requests.map { $0.stationPrefix })
-		print("prefixSet: \(String(describing: prefixSet))")
+	func processRequestsSnapshots(_ snaps: [DataSnapshot]) {
 		
+		// turn snapshots into Reqest objects
+		let reqArr = snaps.compactMap { (snapshot) -> Request? in
+			Request(snapshot: snapshot)
+		}
 		
+		// get unique stationPrefixes for the tableView sections
+		let prefixSet = Set(reqArr.map { $0.stationPrefix })
 		
+		// group requests by prefix & put in store
 		for prefix in prefixSet {
-			let arr = requests.filter { (request) -> Bool in
+			let arr = reqArr.filter { (request) -> Bool in
 				return request.stationPrefix == prefix
 			}
-			
 			requestsStorage[prefix] = arr
 		}
 		
 		sectionTitles = requestsStorage.keys.sorted()
-		
 	}
-	
-	
-	
-	
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
@@ -133,19 +118,20 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: K.CellIDs.requestCellID)!
+		
+		guard let reqCell = cell as? CDRequestTableViewCell else { return cell }
+		
 		print("indexPath: \(String(describing: indexPath))")
 		
 		let sectionKey = sectionTitles[indexPath.section]
-		guard let reqArr = requestsStorage[sectionKey] else { return cell }
+		guard let reqArr = requestsStorage[sectionKey] else { return reqCell }
 		let reqest = reqArr[indexPath.row]
 		
 		print("reqest: \(String(describing: reqest))\n\n")
 		
+		reqCell.populate(from: reqest)
 		
-		
-		
-		
-		return cell
+		return reqCell
 	}
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
