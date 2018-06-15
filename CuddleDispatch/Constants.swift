@@ -18,4 +18,16 @@ struct K {
 		static let addRequestSegue = "addRequestSegue"
 		static let editRequestSegue = "editRequestSegue"
 	}
+	struct DBFields {
+		static let nurse = "nurse"
+		static let carePartner = "carePartner"
+		static let station = "station"
+		static let ageGroup = "ageGroup"
+		static let priority = "priority"
+		static let expirationDate = "expirationDate"
+	}
+	
+	struct CellIDs {
+		static let requestCellID = "requestCellID"
+	}
 }

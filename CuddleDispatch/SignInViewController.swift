@@ -58,7 +58,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
 			// [END basic_write]
 			self.performSegue(withIdentifier: "signIn", sender: nil)
 		}
-		
 	}
 	
 	@IBAction func didTapEmailLogin(_ sender: AnyObject) {
