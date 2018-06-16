@@ -18,7 +18,7 @@ class CDAddEditRequestViewController: UIViewController {
 	let dbRef = Database.database().reference()
 	var editMode = AddEditMode.add
 	
-	var request: Request!
+	var request: Request?
 
 	@IBOutlet weak var stationPicker: UIPickerView!
 	@IBOutlet weak var nurseTxtFld: UITextField!
@@ -32,11 +32,6 @@ class CDAddEditRequestViewController: UIViewController {
 		setUpTitleBar()
 		
 		loadPickerValues()
-		
-		if request == nil {
-			print("making req")
-			request = Request()
-		}
 		
 		updateUIFromRequest()
     }
@@ -54,17 +49,19 @@ class CDAddEditRequestViewController: UIViewController {
 	}
 
 	func updateUIFromRequest() {
+		// only if we are updating / editing a pre-existing request
+		guard let req = request else { return }
 		
-		let idx = stationStrings.index(of: request.station) ?? 0
+		let idx = stationStrings.index(of: req.station) ?? 0
 		stationPicker.selectRow(idx, inComponent: 0, animated: false)
 		
-		nurseTxtFld.text = request.nurse
-		cpTxtFld.text = request.carePartner
+		nurseTxtFld.text = req.nurse
+		cpTxtFld.text = req.carePartner
 		
 		// TODO: load segment titles from database?
 		ageGroupSegCtrl.selectedSegmentIndex = UISegmentedControlNoSegment
 		for idx in 0 ..< ageGroupSegCtrl.numberOfSegments {
-			if request.ageGroup == ageGroupSegCtrl.titleForSegment(at: idx) {
+			if req.ageGroup == ageGroupSegCtrl.titleForSegment(at: idx) {
 				ageGroupSegCtrl.selectedSegmentIndex = idx
 				break
 			}
@@ -72,7 +69,7 @@ class CDAddEditRequestViewController: UIViewController {
 		
 		prioritySegCtrl.selectedSegmentIndex = UISegmentedControlNoSegment
 		for idx in 0 ..< prioritySegCtrl.numberOfSegments {
-			if request.priority == prioritySegCtrl.titleForSegment(at: idx) {
+			if req.priority == prioritySegCtrl.titleForSegment(at: idx) {
 				prioritySegCtrl.selectedSegmentIndex = idx
 				break
 			}
@@ -97,33 +94,36 @@ class CDAddEditRequestViewController: UIViewController {
 	}
 	
 	func saveRequest() {
-		// TODO: don't overwrite existing requests, keep track of timestamp
-		// probably by way of database key in Request, to indicate it's been loaded from db
-		let newDbEntry = dbRef.child("requests").childByAutoId()
-		
+		// build up values from UI no matter what...
 		var valueDict = [String: String]()
 		
 		let stationStr = stationStrings[stationPicker.selectedRow(inComponent: 0)]
 		valueDict[K.DBFields.station] = stationStr
-		
+		valueDict[K.DBFields.stationPrefix] = Request.stationPrefixFromStation(from: stationStr)
+			
 		valueDict[K.DBFields.nurse] = nurseTxtFld.text ?? ""
 		valueDict[K.DBFields.carePartner] = cpTxtFld.text ?? ""
 		valueDict[K.DBFields.ageGroup] = ageGroupSegCtrl.selectedTitle()
 		valueDict[K.DBFields.priority] = prioritySegCtrl.selectedTitle()
-
-		// TODO: leave date alone when editing, probably by way of database key in Request, to indicate it's been loaded from db, or only set date if is nil (in a newlycreated one)
-		valueDict[K.DBFields.expirationDate] = expirationString()
 		
-		newDbEntry.updateChildValues(valueDict)
+		if request != nil {
+			// dealing with pre-existing request = edit / change
+			// leave expiration alone
+			
+			guard let req = request else { fatalError("could not modify Request") }
+			dbRef.child("requests").child(req.dbKey).updateChildValues(valueDict)
+		} else {
+			// make new entry
+			valueDict[K.DBFields.expirationDate] = expirationString() // add new expiration
+			
+			let newDbEntry = dbRef.child("requests").childByAutoId()
+			newDbEntry.updateChildValues(valueDict)
+		}
 	}
 	
 	func expirationString() -> String {
 		// make an ISO 8601 compliant date string to go into the database
-		
-		
-		
 		return self.expirationString(with: Date())
-		
 	}
 	
 	func expirationString(with date: Date) -> String {
@@ -168,18 +168,6 @@ class CDAddEditRequestViewController: UIViewController {
 		let str = formatter.string(from: expDate)
 		return str
 	}
-	
-	
-//    // MARK: - Navigation
-//
-//    // In a storyboard-based application, you will often want to do a little preparation before navigation
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        // Get the new view controller using segue.destinationViewController.
-//        // Pass the selected object to the new view controller.
-//		print("prepare")
-//		
-//	}
-
 }
 
 extension CDAddEditRequestViewController: UIPickerViewDataSource, UIPickerViewDelegate {

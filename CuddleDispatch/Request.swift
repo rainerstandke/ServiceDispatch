@@ -86,6 +86,15 @@ class Request: NSObject {
 		self.init(dbKey: "", station: "", nurse: "", carePartner: "", ageGroup: "", priority: "")
 	}
 	
+	
+	func updateStationPrefix() {
+		stationPrefix = type(of: self).stationPrefixFromStation(from: station)
+	}
+	
+	static func stationPrefixFromStation(from: String) -> String {
+		return from.components(separatedBy: "-").first ?? ""
+	}
+	
 	override var description: String {
 		return makeDesciption()
 	}

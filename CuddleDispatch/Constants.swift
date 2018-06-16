@@ -22,6 +22,7 @@ struct K {
 		static let nurse = "nurse"
 		static let carePartner = "carePartner"
 		static let station = "station"
+		static let stationPrefix = "stationPrefix"
 		static let ageGroup = "ageGroup"
 		static let priority = "priority"
 		static let expirationDate = "expirationDate"
