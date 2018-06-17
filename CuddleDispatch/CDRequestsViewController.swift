@@ -26,7 +26,8 @@ class CDRequestsViewController: UIViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
+		
+		navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewRequest))
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -56,22 +57,23 @@ class CDRequestsViewController: UIViewController {
 		
 		guard let req = Request(snapshot: snapshot) else { return }
 		
-		if let sectionArr = requestsStore[req.stationPrefix] {
+		let prefix = req.stationPrefix // e.g. "5W"
+		
+		if let sectionArr = requestsStore[prefix] {
 			// section exists
-			requestsStore[req.stationPrefix] = sectionArr + [req]
+			requestsStore[prefix] = sectionArr + [req]
 			// TODO: sort
 		} else {
 			// first in the section, just update the store
-			requestsStore[req.stationPrefix] = [req]
+			requestsStore[prefix] = [req]
 		}
 		
-		if !sectionTitles.contains(req.stationPrefix) {
-			sectionTitles.append(req.stationPrefix)
+		if !sectionTitles.contains(prefix) {
+			sectionTitles.append(prefix)
 			sectionTitles.sort()
-			
 			self.reqTableVu.reloadData()
 		} else {
-			if let sectionIndex = sectionTitles.index(of: req.stationPrefix) {
+			if let sectionIndex = sectionTitles.index(of: prefix) {
 				self.reqTableVu.reloadSections(IndexSet(integer: sectionIndex) , with: .none)
 			} else {
 				self.reqTableVu.reloadData()
@@ -109,11 +111,24 @@ class CDRequestsViewController: UIViewController {
 
     // MARK: - Navigation
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-		print("segue: \(String(describing: segue))")
-		print("sender: \(String(describing: sender))")
+	@objc func addNewRequest() {
+		performSegue(withIdentifier: K.SegueIdentifiers.addRequestSegue, sender: nil)
+	}
+	
+	
+	@IBAction func longPressed(_ lpGestRecog: UILongPressGestureRecognizer) {
+		if lpGestRecog.state != .began {
+			return
+		}
+
+		guard let tableView = lpGestRecog.view as? UITableView,
+			tableView == reqTableVu else { return }
+		performSegue(withIdentifier: K.SegueIdentifiers.editRequestSegue, sender: lpGestRecog)
+	}
+	
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		// Get the new view controller using segue.destinationViewController.
+        // for edit an existing Request, rely on sender being the longPressGesture that triggered the seque to find the Request
 		
 		if let identifier = segue.identifier,
 			let dest = segue.destination as? CDAddEditRequestViewController {
@@ -122,9 +137,14 @@ class CDRequestsViewController: UIViewController {
 			case K.SegueIdentifiers.addRequestSegue:
 				dest.editMode = .add
 			case K.SegueIdentifiers.editRequestSegue:
+				guard let lpGestRecog = sender as? UILongPressGestureRecognizer,
+				let tableView = lpGestRecog.view as? UITableView else { break }
+				let lpLocation = lpGestRecog.location(in: tableView)
+				guard let idxPath = tableView.indexPathForRow(at: lpLocation) else { break }
+				guard let request = requestForIndexPath(indexPath: idxPath) else { break }
+				dest.request = request
+				
 				dest.editMode = .edit
-				// TODO: set dest.request!
-			// dest.request = ... -> get from datasource
 			default:
 				print("no segue for identifier: \(String(describing: identifier))")
 			}
@@ -142,6 +162,7 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		
 		if section >= sectionTitles.count { fatalError("section index too high") }
+		
 		let sectTitle = sectionTitles[section]
 		guard let sectionArr = requestsStore[sectTitle] else { fatalError("section array not found") }
 		return sectionArr.count
@@ -152,29 +173,36 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 		let cell = tableView.dequeueReusableCell(withIdentifier: K.CellIDs.requestCellID)!
 		
 		guard let reqCell = cell as? CDRequestTableViewCell else { return cell }
-		
-		let sectionKey = sectionTitles[indexPath.section]
-		guard let reqArr = requestsStore[sectionKey] else { return reqCell }
-		let reqest = reqArr[indexPath.row]
-
-		reqCell.populate(from: reqest)
+		guard let request = requestForIndexPath(indexPath: indexPath) else { return cell }
+		reqCell.populate(from: request)
 		
 		return reqCell
+	}
+	
+	func requestForIndexPath(indexPath: IndexPath?) -> Request? {
+		
+		guard let indexPath = indexPath else { return nil }
+		if indexPath.section > sectionTitles.count { return nil }
+		
+		let sectionKey = sectionTitles[indexPath.section]
+		guard let reqArr = requestsStore[sectionKey] else { return nil }
+		return reqArr[indexPath.row]
 	}
 	
 	func numberOfSections(in tableView: UITableView) -> Int {
 		return sectionTitles.count
 	}
 	
+	// TODO: possibly add empty string after each title for spacing?? but adds lots of complexity elsewhere
 	func sectionIndexTitles(for tableView: UITableView) -> [String]? {
 		return sectionTitles
 	}
 	
+	// helper
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		if section < sectionTitles.count {
 			return sectionTitles[section]
 		}
 		return nil
 	}
-	
 }

@@ -30,10 +30,8 @@ class CDAddEditRequestViewController: UIViewController {
         super.viewDidLoad()
 		
 		setUpTitleBar()
+		prepPickerView()
 		
-		loadPickerValues()
-		
-		updateUIFromRequest()
     }
 	
 	func setUpTitleBar() {
@@ -47,18 +45,23 @@ class CDAddEditRequestViewController: UIViewController {
 		navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveAndUnwind))
 		navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelAddEdit))
 	}
+	
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		updateUIFromRequest()
+	}
 
 	func updateUIFromRequest() {
 		// only if we are updating / editing a pre-existing request
 		guard let req = request else { return }
 		
-		let idx = stationStrings.index(of: req.station) ?? 0
+		let idx = AppDelegate.stationStrings.index(of: req.station) ?? 0
 		stationPicker.selectRow(idx, inComponent: 0, animated: false)
 		
 		nurseTxtFld.text = req.nurse
 		cpTxtFld.text = req.carePartner
 		
-		// TODO: load segment titles from database?
+		// TODO: load (ageGroup & priority) segment titles from database?
 		ageGroupSegCtrl.selectedSegmentIndex = UISegmentedControlNoSegment
 		for idx in 0 ..< ageGroupSegCtrl.numberOfSegments {
 			if req.ageGroup == ageGroupSegCtrl.titleForSegment(at: idx) {
@@ -172,16 +175,21 @@ class CDAddEditRequestViewController: UIViewController {
 
 extension CDAddEditRequestViewController: UIPickerViewDataSource, UIPickerViewDelegate {
 	
-	func loadPickerValues() {
+	func prepPickerView() {
+		
+		stationStrings = AppDelegate.stationStrings
+		stationPicker.delegate = self
+		stationPicker.dataSource = self
+		
 		// TODO: maybe change to 3 segments? Emergency Dept?
-		dbRef.child("station-list").observeSingleEvent(of: .value) { [weak self] (snapShot) in
-			if let stationListStr = snapShot.value as? String {
-				let subStrings = stationListStr.split(separator: " ")
-				self?.stationStrings = subStrings.map { return String($0) }
-				self?.stationPicker.delegate = self
-				self?.stationPicker.dataSource = self
-			}
-		}
+//		dbRef.child("station-list").observeSingleEvent(of: .value) { [weak self] (snapShot) in
+//			if let stationListStr = snapShot.value as? String {
+//				let subStrings = stationListStr.split(separator: " ")
+//				self?.stationStrings = subStrings.map { return String($0) }
+//				self?.stationPicker.delegate = self
+//				self?.stationPicker.dataSource = self
+//			}
+//		}
 	}
 	
 	func numberOfComponents(in pickerView: UIPickerView) -> Int {
