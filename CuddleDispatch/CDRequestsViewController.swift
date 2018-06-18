@@ -12,11 +12,8 @@ import Firebase
 
 class CDRequestsViewController: UIViewController {
 	
-	
-	
 	var sectionTitles = [String]()
 	
-	var requestsStore = [String: [Request]]()
 	var store = RequestStore()
 	
 	lazy var dbRef: DatabaseReference = Database.database().reference()
@@ -50,11 +47,11 @@ class CDRequestsViewController: UIViewController {
 		
 		
 		// clean out completely b/c we'll get all new requests, even if previously displayed
-		requestsStore.removeAll()
 		store.resetStore()
 		sectionTitles.removeAll()
 		
 		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
+		// TODO: create index in cloud to prevent from sorting/filtering locally
 		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.expirationString(with: Date()))
 
 		// this fires for local edits as well...
@@ -73,131 +70,31 @@ class CDRequestsViewController: UIViewController {
 		}))
 	}
 	
+	// TODO: inline these 2?
 	func addRequestsSnapshot(_ snapshot: DataSnapshot) {
-		
 		guard let req = Request(snapshot: snapshot) else { return }
 		
 		store.addNewRequest(req)
-		
-		
-		
-		let prefix = req.stationPrefix // e.g. "5W"
-		
-		if let sectionArr = requestsStore[prefix] {
-			// section exists
-			var newSectionArr = sectionArr + [req]
-			newSectionArr.sort { (req1, req2) -> Bool in
-				return (req1.station, req1.priority, req1.ageGroup) < (req2.station, req2.priority, req2.ageGroup)
-			}
-			requestsStore[prefix] = newSectionArr
-			
-		} else {
-			// first in the section, just update the store
-			requestsStore[prefix] = [req]
-		}
-		
-		
-		
 		updateSectionTitles(with: [req.stationPrefix])
-		
-		reqTableVu.reloadData()
 	}
 	
 	func processExternalChange(in snapshot: DataSnapshot) {
 		
 		let affectedSectionTitles = store.updateWithSnapshot(snapshot)
 		updateSectionTitles(with: affectedSectionTitles)
-		
-		
-		
-		
-		
-		let allRequests = requestsStore.values.reduce([]) { (arr, reqArr) -> [Request] in
-			return arr + reqArr
-		}
-		guard let changedRequest = allRequests.first(where: { $0.dbKey == snapshot.key } ) else { print("request to change not found"); return }
-		
-		let oldPrefix = changedRequest.stationPrefix
-		
-		changedRequest.updateFrom(snapshot: snapshot)
-		
-		let sortFunc = { (req1: Request, req2: Request) -> Bool in
-			return (req1.station, req1.priority, req1.ageGroup) < (req2.station, req2.priority, req2.ageGroup)
-		}
-		
-		if let newPrefix = snapshot.valueDict()["stationPrefix"] as? String {
-			
-			if oldPrefix == newPrefix {
-				// sort section
-				requestsStore[oldPrefix]?.sort(by: sortFunc)
-			} else {
-				// remove from old section, add to new, sort both
-				
-				
-				if let idx = requestsStore[oldPrefix]?.index(of: changedRequest) {
-					requestsStore[oldPrefix]?.remove(at: idx)
-				}
-				
-				addRequestsSnapshot(snapshot)
-				
-				
-			}
-			
-			
-			changedRequest.updateFrom(snapshot: snapshot)
-			
-			requestsStore.keys.forEach { (sectionTitle) in
-				
-				requestsStore[sectionTitle]?.sort(by: sortFunc)
-			}
-			
-			reqTableVu.reloadData()
-			
-		}
-		
-		// this works for changes within a section only
-//		let valueDict = snapshot.valueDict()
-//		guard let prefix = valueDict["stationPrefix"] as? String else { print("no prefix in changed record"); return }
-//		guard let sectionArray = requestsStore[prefix] else { print("section not found"); return }
-//		let changedRequest = sectionArray.first { $0.dbKey == snapshot.key }
-//		changedRequest?.updateFrom(snapshot: snapshot)
-//		reloadTableDataInSectionTitled(prefix)
 	}
-	
-//	func processRequestsSnapshots(_ snaps: [DataSnapshot]) {
-//		// UNUSED (meant to deal with an array of all)
-//
-//		// turn snapshots into Reqest objects
-//		let reqArr = snaps.compactMap { (snapshot) -> Request? in
-//			Request(snapshot: snapshot)
-//		}
-//
-//		// get unique stationPrefixes for the tableView sections
-//		let prefixSet = Set(reqArr.map { $0.stationPrefix })
-//
-//		// group requests by prefix & put in store
-//		for prefix in prefixSet {
-//			let arr = reqArr.filter { (request) -> Bool in
-//				return request.stationPrefix == prefix
-//			}
-//			requestsStore[prefix] = arr
-//		}
-//
-//		sectionTitles = requestsStore.keys.sorted()
-//	}
 
 	override func viewWillDisappear(_ animated: Bool) {
 		requestsRef.removeAllObservers()
 		observedRequestRefHandles.removeAll()
 	}
-	
 
-    // MARK: - Navigation
+    // MARK: - Navigation for add / edit request
 
 	@objc func addNewRequest() {
+		// called from right nav item
 		performSegue(withIdentifier: K.SegueIdentifiers.addRequestSegue, sender: nil)
 	}
-	
 	
 	@IBAction func longPressed(_ lpGestRecog: UILongPressGestureRecognizer) {
 		// long press to edit/change a request
@@ -250,12 +147,6 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 		if section >= sectionTitles.count { fatalError("section index too high") }
 		let sectTitle = sectionTitles[section]
 		return store.countForSection(sectTitle)
-		
-		
-		
-		
-		guard let sectionArr = requestsStore[sectTitle] else { fatalError("section array not found") }
-		return sectionArr.count
 	}
 	
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -273,10 +164,10 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 		return sectionTitles.count
 	}
 	
+//	func sectionIndexTitles(for tableView: UITableView) -> [String]? {
 	// TODO: possibly add empty string after each title for spacing?? but adds lots of complexity elsewhere
-	func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-		return sectionTitles
-	}
+//		return sectionTitles
+//	}
 	
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		if section < sectionTitles.count {
@@ -287,21 +178,11 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 
 	// helpers
 	func requestForIndexPath(indexPath: IndexPath?) -> Request? {
-		
 		guard let indexPath = indexPath else { return nil }
 		if indexPath.section > sectionTitles.count { return nil }
 		
 		let sectionKey = sectionTitles[indexPath.section]
 		return store.requestInSection(sectionKey, at: indexPath.row)
-		
-		
-		
-		
-		
-		
-		
-		guard let reqArr = requestsStore[sectionKey] else { return nil }
-		return reqArr[indexPath.row]
 	}
 	
 	func updateSectionTitles(with titles: [String]) {
@@ -315,16 +196,6 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 				// TODO: check out if whole table reload is ever needed
 			}
 		}
-		
-		
-		
-		
-		
-		reqTableVu.reloadData()
-		
-		
-		
-		
 		
 		if sectionsNeedingReload.count > 0 {
 			sectionsNeedingReload.forEach { (section) in

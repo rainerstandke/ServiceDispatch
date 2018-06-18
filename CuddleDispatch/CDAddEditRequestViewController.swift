@@ -31,7 +31,6 @@ class CDAddEditRequestViewController: UIViewController {
 		
 		setUpTitleBar()
 		prepPickerView()
-		
     }
 	
 	func setUpTitleBar() {
@@ -81,7 +80,7 @@ class CDAddEditRequestViewController: UIViewController {
 	
 	@objc func saveAndUnwind() {
 		// called from left bar button
-		saveRequest()
+		saveRequest() // write UI values into new or existing Request
 		performSegue(withIdentifier: "unwindFromAddEdit", sender: nil)
 	}
 	
@@ -92,8 +91,6 @@ class CDAddEditRequestViewController: UIViewController {
 
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		// this gets called when we unwind from here back to table vu con
-		print("segue: \(String(describing: segue))")
-		
 	}
 	
 	func saveRequest() {
@@ -123,73 +120,16 @@ class CDAddEditRequestViewController: UIViewController {
 			newDbEntry.updateChildValues(valueDict)
 		}
 	}
-	
-//	func expirationString() -> String {
-//		// make an ISO 8601 compliant date string to go into the database
-//		return self.expirationString(with: Date())
-//	}
-//	
-//	func expirationString(with date: Date) -> String {
-//		// return iso string for next upcoming 9am or 9pm, depending on passed-in date
-//		
-//		// TODO: write tests!
-//		
-//		let calendar = Calendar.init(identifier: .gregorian)
-//		
-//		let midNightTodayDateComps = DateComponents(calendar: calendar,
-//													year: calendar.component(.year, from: date),
-//													month: calendar.component(.month, from: date),
-//													day: calendar.component(.day, from: date),
-//													hour: 0,
-//													minute: 0,
-//													second: 0)
-//		
-//		var sixAmTodayDateComps = midNightTodayDateComps
-//		sixAmTodayDateComps.hour = 6
-//		let sixAmToday = calendar.date(from: sixAmTodayDateComps)
-//		
-//		var sixPmTodayDateComps = midNightTodayDateComps
-//		sixPmTodayDateComps.hour = 18
-//		let sixPmToday = calendar.date(from: sixPmTodayDateComps)
-//		
-//		var expirationDateComps = midNightTodayDateComps
-//		if date < sixAmToday! {
-//			expirationDateComps.hour = 9
-//		} else if date  > sixPmToday! {
-//			if let dayNr = expirationDateComps.day {
-//				expirationDateComps.day = dayNr + 1
-//				expirationDateComps.hour = 9
-//			} else {
-//				expirationDateComps.hour = 23 // just in case...
-//			}
-//		} else {
-//			expirationDateComps.hour = 21
-//		}
-//		
-//		let expDate = calendar.date(from: expirationDateComps) ?? Date.distantPast
-//		let formatter = ISO8601DateFormatter()
-//		let str = formatter.string(from: expDate)
-//		return str
-//	}
 }
 
 extension CDAddEditRequestViewController: UIPickerViewDataSource, UIPickerViewDelegate {
 	
 	func prepPickerView() {
-		
 		stationStrings = AppDelegate.stationStrings
 		stationPicker.delegate = self
 		stationPicker.dataSource = self
 		
 		// TODO: maybe change to 3 segments? Emergency Dept?
-//		dbRef.child("station-list").observeSingleEvent(of: .value) { [weak self] (snapShot) in
-//			if let stationListStr = snapShot.value as? String {
-//				let subStrings = stationListStr.split(separator: " ")
-//				self?.stationStrings = subStrings.map { return String($0) }
-//				self?.stationPicker.delegate = self
-//				self?.stationPicker.dataSource = self
-//			}
-//		}
 	}
 	
 	func numberOfComponents(in pickerView: UIPickerView) -> Int {
@@ -203,7 +143,6 @@ extension CDAddEditRequestViewController: UIPickerViewDataSource, UIPickerViewDe
 	func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
 		return stationStrings[row]
 	}
-	
 }
 
 

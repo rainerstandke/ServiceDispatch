@@ -9,9 +9,9 @@
 
 /* holds all requests */
 
+
 import Foundation
 import Firebase
-
 
 class RequestStore {
 	
@@ -38,6 +38,7 @@ class RequestStore {
 			// section exists
 			sectionArr.append(req)
 			sectionArr.sort(by: requestSortFunction)
+			store[prefix] = sectionArr
 		} else {
 			// first in the section, just update the store
 			store[prefix] = [req]
@@ -47,7 +48,6 @@ class RequestStore {
 	// take a snapshot, find the corresponding request, update it, move sections if needed
 	// return affected section titles
 	func updateWithSnapshot(_ snapshot: DataSnapshot) -> [String] {
-		
 		guard let changedReq = requestWithKey(snapshot.key) else { return [] }
 		let oldPrefix = changedReq.stationPrefix
 		
