@@ -20,7 +20,7 @@ class CDRequestsViewController: UIViewController {
 	
 	lazy var dbRef: DatabaseReference = Database.database().reference()
 	lazy var requestsRef: DatabaseReference = dbRef.child("requests")
-	var observedRequestRefHandles = [DatabaseHandle]()
+	var observedRequestRefHandles = [DatabaseHandle]() // effectively UNUSED
 	
 	@IBOutlet weak var reqTableVu: UITableView!
 	
@@ -33,24 +33,42 @@ class CDRequestsViewController: UIViewController {
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
-		// TODO: filter for only not yet expired
 		
-		// clean out completely b/c we'll get all new notifs, even if previously displayed
+		
+		
+		
+		// TODO:
+		// for expiring soon, look at local time -> after six? filter Requests for expiring in less than 3 hours
+		// each time reqlist con comes on screen set a timer for the next time 6 rolls around (invalidate each time it disappears, too)
+		
+		// for database cleanup, a similar mechanism could call into google function to check if db has been cleaned -> at 9. store flag last clean time
+		
+		
+		
+		
+		
+		
+		// clean out completely b/c we'll get all new requests, even if previously displayed
 		requestsStore.removeAll()
 		sectionTitles.removeAll()
 		
-		observedRequestRefHandles.append(self.requestsRef.observe(.childAdded, with: { [unowned self] (snapshot) in
+		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
+		let validQuery = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.expirationString(with: Date()))
+
+		// this fires for local edits as well...
+		observedRequestRefHandles.append(validQuery.observe(.childAdded, with: { [unowned self] (snapshot) in
 			self.addRequestsSnapshot(snapshot)
 		}))
 		
-		observedRequestRefHandles.append(self.requestsRef.observe(.childChanged, with: { (snapshot) in
-			print("changed snapshot: \(String(describing: snapshot))")
+		// fires for external edits
+		observedRequestRefHandles.append(validQuery.observe(.childChanged, with: { (snapshot) in
+			self.processExternalChange(in: snapshot)
 		}))
 		
-		observedRequestRefHandles.append(self.requestsRef.observe(.childRemoved, with: { (snapshot) in
+		observedRequestRefHandles.append(validQuery.observe(.childRemoved, with: { (snapshot) in
+			// TODO: implement model update
 			print("removed snapshot: \(String(describing: snapshot))")
 		}))
-		print("observedRequestRefHandles: \(String(describing: self.observedRequestRefHandles))")
 	}
 	
 	func addRequestsSnapshot(_ snapshot: DataSnapshot) {
@@ -62,46 +80,46 @@ class CDRequestsViewController: UIViewController {
 		if let sectionArr = requestsStore[prefix] {
 			// section exists
 			requestsStore[prefix] = sectionArr + [req]
-			// TODO: sort
+			// TODO: sort by priority, station
 		} else {
 			// first in the section, just update the store
 			requestsStore[prefix] = [req]
 		}
 		
-		if !sectionTitles.contains(prefix) {
-			sectionTitles.append(prefix)
-			sectionTitles.sort()
-			self.reqTableVu.reloadData()
-		} else {
-			if let sectionIndex = sectionTitles.index(of: prefix) {
-				self.reqTableVu.reloadSections(IndexSet(integer: sectionIndex) , with: .none)
-			} else {
-				self.reqTableVu.reloadData()
-			}
-		}
+		updateSectionTitles(with: prefix)
 	}
 	
-	func processRequestsSnapshots(_ snaps: [DataSnapshot]) {
-		// UNUSED (meant to deal with an array of all)
+	func processExternalChange(in snapshot: DataSnapshot) {
 		
-		// turn snapshots into Reqest objects
-		let reqArr = snaps.compactMap { (snapshot) -> Request? in
-			Request(snapshot: snapshot)
-		}
-		
-		// get unique stationPrefixes for the tableView sections
-		let prefixSet = Set(reqArr.map { $0.stationPrefix })
-		
-		// group requests by prefix & put in store
-		for prefix in prefixSet {
-			let arr = reqArr.filter { (request) -> Bool in
-				return request.stationPrefix == prefix
-			}
-			requestsStore[prefix] = arr
-		}
-		
-		sectionTitles = requestsStore.keys.sorted()
+		let valueDict = snapshot.valueDict()
+		guard let prefix = valueDict["stationPrefix"] as? String else { print("no prefix in changed record"); return }
+		guard let sectionArray = requestsStore[prefix] else { print("section not found"); return }
+		let changedRequest = sectionArray.first { $0.dbKey == snapshot.key }
+		changedRequest?.updateFrom(snapshot: snapshot)
+		reloadTableDataInSectionTitled(prefix)
 	}
+	
+//	func processRequestsSnapshots(_ snaps: [DataSnapshot]) {
+//		// UNUSED (meant to deal with an array of all)
+//		
+//		// turn snapshots into Reqest objects
+//		let reqArr = snaps.compactMap { (snapshot) -> Request? in
+//			Request(snapshot: snapshot)
+//		}
+//		
+//		// get unique stationPrefixes for the tableView sections
+//		let prefixSet = Set(reqArr.map { $0.stationPrefix })
+//		
+//		// group requests by prefix & put in store
+//		for prefix in prefixSet {
+//			let arr = reqArr.filter { (request) -> Bool in
+//				return request.stationPrefix == prefix
+//			}
+//			requestsStore[prefix] = arr
+//		}
+//		
+//		sectionTitles = requestsStore.keys.sorted()
+//	}
 
 	override func viewWillDisappear(_ animated: Bool) {
 		requestsRef.removeAllObservers()
@@ -117,18 +135,20 @@ class CDRequestsViewController: UIViewController {
 	
 	
 	@IBAction func longPressed(_ lpGestRecog: UILongPressGestureRecognizer) {
-		if lpGestRecog.state != .began {
-			return
-		}
+		// long press to edit/change a request
+		
+		if lpGestRecog.state != .began { return }
 
-		guard let tableView = lpGestRecog.view as? UITableView,
-			tableView == reqTableVu else { return }
+		// make sure the long press comes from request tableView
+		guard lpGestRecog.view == reqTableVu else { return }
+		
 		performSegue(withIdentifier: K.SegueIdentifiers.editRequestSegue, sender: lpGestRecog)
 	}
 	
 	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		// Get the new view controller using segue.destinationViewController.
         // for edit an existing Request, rely on sender being the longPressGesture that triggered the seque to find the Request
+		// sender for edit/change is expected to be the long press recognizer on requestsTableView
 		
 		if let identifier = segue.identifier,
 			let dest = segue.destination as? CDAddEditRequestViewController {
@@ -139,6 +159,7 @@ class CDRequestsViewController: UIViewController {
 			case K.SegueIdentifiers.editRequestSegue:
 				guard let lpGestRecog = sender as? UILongPressGestureRecognizer,
 				let tableView = lpGestRecog.view as? UITableView else { break }
+				
 				let lpLocation = lpGestRecog.location(in: tableView)
 				guard let idxPath = tableView.indexPathForRow(at: lpLocation) else { break }
 				guard let request = requestForIndexPath(indexPath: idxPath) else { break }
@@ -179,6 +200,23 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 		return reqCell
 	}
 	
+	func numberOfSections(in tableView: UITableView) -> Int {
+		return sectionTitles.count
+	}
+	
+	// TODO: possibly add empty string after each title for spacing?? but adds lots of complexity elsewhere
+	func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+		return sectionTitles
+	}
+	
+	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		if section < sectionTitles.count {
+			return sectionTitles[section]
+		}
+		return nil
+	}
+
+	// helpers
 	func requestForIndexPath(indexPath: IndexPath?) -> Request? {
 		
 		guard let indexPath = indexPath else { return nil }
@@ -189,20 +227,26 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 		return reqArr[indexPath.row]
 	}
 	
-	func numberOfSections(in tableView: UITableView) -> Int {
-		return sectionTitles.count
-	}
-	
-	// TODO: possibly add empty string after each title for spacing?? but adds lots of complexity elsewhere
-	func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-		return sectionTitles
-	}
-	
-	// helper
-	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		if section < sectionTitles.count {
-			return sectionTitles[section]
+	func updateSectionTitles(with title: String) {
+		if !sectionTitles.contains(title) {
+			sectionTitles.append(title)
+			sectionTitles.sort()
+			self.reqTableVu.reloadData()
+		} else {
+			reloadTableDataInSectionTitled(title)
+//			if let sectionIndex = sectionTitles.index(of: title) {
+//				self.reqTableVu.reloadSections(IndexSet(integer: sectionIndex) , with: .none)
+//			} else {
+//				self.reqTableVu.reloadData()
+//			}
 		}
-		return nil
+	}
+	
+	func reloadTableDataInSectionTitled(_ title: String) {
+		if let sectionIndex = sectionTitles.index(of: title) {
+			self.reqTableVu.reloadSections(IndexSet(integer: sectionIndex) , with: .none)
+		} else {
+			self.reqTableVu.reloadData()
+		}
 	}
 }

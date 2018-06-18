@@ -17,12 +17,13 @@ class Request: NSObject {
 	/* NOTE: properties are depended upon to be Strings ONLY */
 	
 	var dbKey: String // TODO: make optional to use as new? flag??
-	var station: String {
-		didSet(newValue) {
-			print("newValue: \(String(describing: newValue))")
-			stationPrefix = station.components(separatedBy: "-").first ?? ""
-		}
-	}
+	var station: String
+//	{
+//		didSet(newValue) {
+//			print("newValue: \(String(describing: newValue))")
+//			stationPrefix = station.components(separatedBy: "-").first ?? ""
+//		}
+//	}
 	var nurse: String
 	var carePartner: String
 	var ageGroup: String
@@ -46,7 +47,9 @@ class Request: NSObject {
 	init?(snapshot: DataSnapshot) {
 		// this expects a snapshot for one individual request
 		
-		guard let dict = snapshot.value as? [String:Any] else { return nil }
+//		guard let dict = snapshot.value as? [String:Any] else { return nil }
+		
+		let dict = snapshot.valueDict()
 		
 		guard let station = dict["station"]  as? String else { return nil }
 		guard let nurse = dict["nurse"]  as? String else { return nil }
@@ -61,7 +64,11 @@ class Request: NSObject {
 		self.ageGroup = ageGroup
 		self.priority = priority
 	
-		self.stationPrefix = station.components(separatedBy: "-").first ?? ""
+		self.stationPrefix = ""
+		super.init()
+		updateStationPrefix()
+		
+//		self.stationPrefix = station.components(separatedBy: "-").first ?? ""
 	}
 	
 	init?(dbKey: String, valuesDict:[String: String]) {
@@ -79,13 +86,40 @@ class Request: NSObject {
 		self.ageGroup = ageGroup
 		self.priority = priority
 	
-		self.stationPrefix = station.components(separatedBy: "-").first ?? ""
+		self.stationPrefix = ""
+		super.init()
+		updateStationPrefix()
 	}
 	
 	convenience override init() {
 		self.init(dbKey: "", station: "", nurse: "", carePartner: "", ageGroup: "", priority: "")
 	}
 	
+	// MARK: -
+	
+	func updateFrom(snapshot: DataSnapshot) {
+		let dict = snapshot.valueDict()
+		
+		if let station = dict["station"]  as? String {
+			self.station = station
+		}
+		if let nurse = dict["nurse"]  as? String {
+			self.nurse = nurse
+		}
+		if let carePartner = dict["carePartner"]  as? String {
+			self.carePartner = carePartner
+		}
+		if let ageGroup = dict["ageGroup"]  as? String {
+			self.ageGroup = ageGroup
+		}
+		if let priority = dict["priority"]  as? String {
+			self.priority = priority
+		}
+		
+		updateStationPrefix()
+	}
+	
+	// MARK: -
 	
 	func updateStationPrefix() {
 		stationPrefix = type(of: self).stationPrefixFromStation(from: station)
@@ -94,6 +128,8 @@ class Request: NSObject {
 	static func stationPrefixFromStation(from: String) -> String {
 		return from.components(separatedBy: "-").first ?? ""
 	}
+	
+	// MARK: -
 	
 	override var description: String {
 		return makeDesciption()
