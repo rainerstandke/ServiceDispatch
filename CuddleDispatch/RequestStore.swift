@@ -15,6 +15,10 @@ import Firebase
 
 class RequestStore {
 	
+	
+	// TODO: organize / order this class
+	
+	
 	// store is dict of array of Requests, where the keys are the section titles in the table view
 	private var store = [String: [Request]]()
 	
@@ -48,6 +52,7 @@ class RequestStore {
 	// take a snapshot, find the corresponding request, update it, move sections if needed
 	// return affected section titles
 	func updateWithSnapshot(_ snapshot: DataSnapshot) -> [String] {
+		// (could use snapshot.stationPrefix to get section, right?)
 		guard let changedReq = requestWithKey(snapshot.key) else { return [] }
 		let oldPrefix = changedReq.stationPrefix
 		
@@ -68,6 +73,59 @@ class RequestStore {
 		return affectedSectionStrs
 	}
 	
+	func deleteWithSnapshot(_ snapshot: DataSnapshot) -> RemoteRemovalResult {
+		
+		// (could use snapshot.stationPrefix to get section, right?)
+		guard let tbdReq = requestWithKey(snapshot.key) else { return .failed }
+		let prefix = tbdReq.stationPrefix
+		
+		remove(request: tbdReq, from: prefix)
+		
+		guard let subArr = store[prefix] else { return .failed }
+		if subArr.count == 0 {
+			store.removeValue(forKey: prefix)
+			let newSections = store.keys.sorted()
+			return .needFullReloadWithNewSections(newSections)
+		}
+		
+		return .needPartialReloadOf([prefix])
+	}
+	
+	// result of a deletion that happened remotely
+	enum RemoteRemovalResult {
+		case needPartialReloadOf([String])
+		case needFullReloadWithNewSections([String])
+		case failed
+	}
+	
+	func deleteIn(section: String, at idx: Int) -> LocalRemovalResult {
+		guard var sectionArr = store[section] else { return .failed }
+		guard idx < sectionArr.count else { return .failed }
+		
+		let request = sectionArr[idx]
+		
+		sectionArr.remove(at: idx)
+		store[section] = sectionArr
+		
+		if sectionArr.count == 0 {
+			store.removeValue(forKey: section)
+			let newSections = store.keys.sorted()
+			return .needFullReloadWithNewSections(sectionTitles: newSections, removedKey: request.dbKey)
+		}
+		
+		return .needPartialReloadOf(sectionTitle: section, removedKey: request.dbKey)
+	}
+	
+	// result of a deletion that was triggrered by the user, locally
+	enum LocalRemovalResult {
+		case needPartialReloadOf(sectionTitle: String, removedKey: String)
+		case needFullReloadWithNewSections(sectionTitles: [String], removedKey: String)
+		case failed
+	}
+	
+	
+	
+	
 	private func requestWithKey(_ dbKey: String) -> Request? {
 		for section in store.keys {
 			if let req = store[section]?.first(where: { $0.dbKey == dbKey }) {
@@ -81,6 +139,7 @@ class RequestStore {
 		guard var sectionArr = store[section] else { return }
 		guard let idx = sectionArr.index(of: request) else { return }
 		sectionArr.remove(at: idx)
+		store[section] = sectionArr
 	}
 	
 	// MARK: for tableView queries

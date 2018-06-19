@@ -9,6 +9,11 @@
 import UIKit
 import Firebase
 
+// TODO:
+// for expiring soon, look at local time -> after six? filter Requests for expiring in less than 3 hours
+// each time reqlist con comes on screen set a timer for the next time 6 rolls around (invalidate each time it disappears, too)
+
+// for database cleanup, a similar mechanism could call into google function to check if db has been cleaned -> at 9. store flag last clean time
 
 class CDRequestsViewController: UIViewController {
 	
@@ -18,7 +23,7 @@ class CDRequestsViewController: UIViewController {
 	
 	lazy var dbRef: DatabaseReference = Database.database().reference()
 	lazy var requestsRef: DatabaseReference = dbRef.child("requests")
-	var observedRequestRefHandles = [DatabaseHandle]() // effectively UNUSED
+	// TODO: call 'keepSynced'? should keep us from disconnecting while behind addEditVuCon - but would have to stop on app exit/bg etc
 	
 	@IBOutlet weak var reqTableVu: UITableView!
 	
@@ -30,22 +35,6 @@ class CDRequestsViewController: UIViewController {
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		
-		
-		
-		
-		
-		// TODO:
-		// for expiring soon, look at local time -> after six? filter Requests for expiring in less than 3 hours
-		// each time reqlist con comes on screen set a timer for the next time 6 rolls around (invalidate each time it disappears, too)
-		
-		// for database cleanup, a similar mechanism could call into google function to check if db has been cleaned -> at 9. store flag last clean time
-		
-		
-		
-		
-		
-		
 		// clean out completely b/c we'll get all new requests, even if previously displayed
 		store.resetStore()
 		sectionTitles.removeAll()
@@ -55,19 +44,31 @@ class CDRequestsViewController: UIViewController {
 		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.expirationString(with: Date()))
 
 		// this fires for local edits as well...
-		observedRequestRefHandles.append(query.observe(.childAdded, with: { [unowned self] (snapshot) in
+		query.observe(.childAdded, with: { [unowned self] (snapshot) in
 			self.addRequestsSnapshot(snapshot)
-		}))
+		})
 		
-		// fires for external edits
-		observedRequestRefHandles.append(query.observe(.childChanged, with: { (snapshot) in
+		query.observe(.childChanged, with: { [unowned self] (snapshot) in
+			// fires for external edits
 			self.processExternalChange(in: snapshot)
-		}))
+		})
 		
-		observedRequestRefHandles.append(query.observe(.childRemoved, with: { (snapshot) in
-			// TODO: implement model update
-			print("removed snapshot: \(String(describing: snapshot))")
-		}))
+		query.observe(.childRemoved, with: { [unowned self] (snapshot) in
+			// fires for external deletions
+			let status = self.store.deleteWithSnapshot(snapshot)
+			
+			switch status {
+			case .failed:
+				break
+			case .needPartialReloadOf(let strs):
+				strs.forEach { self.reloadTableDataInSectionTitled($0) }
+				break
+			case .needFullReloadWithNewSections(let strs):
+				self.sectionTitles = strs
+				self.reqTableVu.reloadData()
+				break
+			}
+		})
 	}
 	
 	// TODO: inline these 2?
@@ -86,7 +87,6 @@ class CDRequestsViewController: UIViewController {
 
 	override func viewWillDisappear(_ animated: Bool) {
 		requestsRef.removeAllObservers()
-		observedRequestRefHandles.removeAll()
 	}
 
     // MARK: - Navigation for add / edit request
@@ -143,7 +143,6 @@ class CDRequestsViewController: UIViewController {
 
 extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		
 		if section >= sectionTitles.count { fatalError("section index too high") }
 		let sectTitle = sectionTitles[section]
 		return store.countForSection(sectTitle)
@@ -164,16 +163,35 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 		return sectionTitles.count
 	}
 	
-//	func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+	//	func sectionIndexTitles(for tableView: UITableView) -> [String]? {
 	// TODO: possibly add empty string after each title for spacing?? but adds lots of complexity elsewhere
-//		return sectionTitles
-//	}
+	//		return sectionTitles
+	//	}
 	
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		if section < sectionTitles.count {
 			return sectionTitles[section]
 		}
 		return nil
+	}
+	
+	func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+		guard indexPath.section < sectionTitles.count else { return }
+		let removalResult = store.deleteIn(section: sectionTitles[indexPath.section], at: indexPath.row)
+		
+		switch removalResult {
+		case .failed:
+			return
+		case .needFullReloadWithNewSections(sectionTitles: let strs, removedKey: let removedKey):
+			requestsRef.child(removedKey).removeValue()
+			self.sectionTitles = strs
+			self.reqTableVu.reloadData()
+			break
+		case .needPartialReloadOf(sectionTitle: let str, removedKey: let removedKey):
+			requestsRef.child(removedKey).removeValue()
+			self.reloadTableDataInSectionTitled(str)
+			break
+		}
 	}
 
 	// helpers

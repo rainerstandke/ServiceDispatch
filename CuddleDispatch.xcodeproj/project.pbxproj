@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CD4388A48412664A33BCC675 /* Pods_CuddleDispatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77037DBFB9D318FEF4EDC0B0 /* Pods_CuddleDispatch.framework */; };
 		D5042F6F20D0621B007F0A5D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5042F6B20D0621A007F0A5D /* Main.storyboard */; };
 		D5042F7020D0621B007F0A5D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5042F6D20D0621B007F0A5D /* LaunchScreen.storyboard */; };
 		D5042F7220D0878A007F0A5D /* CDNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5042F7120D0878A007F0A5D /* CDNavigationController.swift */; };
@@ -29,6 +30,7 @@
 /* Begin PBXFileReference section */
 		3B532F7E00115AA2C03B3C3C /* Pods-CuddleDispatch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CuddleDispatch.release.xcconfig"; path = "Pods/Target Support Files/Pods-CuddleDispatch/Pods-CuddleDispatch.release.xcconfig"; sourceTree = "<group>"; };
 		4465331DA3122A4569A67A70 /* Pods-CuddleDispatch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CuddleDispatch.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CuddleDispatch/Pods-CuddleDispatch.debug.xcconfig"; sourceTree = "<group>"; };
+		77037DBFB9D318FEF4EDC0B0 /* Pods_CuddleDispatch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CuddleDispatch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5042F6C20D0621A007F0A5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D5042F6E20D0621B007F0A5D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D5042F7120D0878A007F0A5D /* CDNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDNavigationController.swift; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD4388A48412664A33BCC675 /* Pods_CuddleDispatch.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +81,7 @@
 				D5C7089920D03E56001FD1C1 /* CuddleDispatch */,
 				D5C7089820D03E56001FD1C1 /* Products */,
 				3D2A9900658C0AFA376C541C /* Pods */,
+				F6AA6F42AE4BC375EE9783DE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -140,6 +144,14 @@
 				D533E7CD20D8077E0018F321 /* DataSnapshot+ValueDict.swift */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		F6AA6F42AE4BC375EE9783DE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				77037DBFB9D318FEF4EDC0B0 /* Pods_CuddleDispatch.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
