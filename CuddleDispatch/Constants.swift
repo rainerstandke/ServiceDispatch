@@ -26,6 +26,7 @@ struct K {
 		static let ageGroup = "ageGroup"
 		static let priority = "priority"
 		static let expirationDate = "expirationDate"
+		static let statusString = "statusString"
 	}
 	
 	struct CellIDs {

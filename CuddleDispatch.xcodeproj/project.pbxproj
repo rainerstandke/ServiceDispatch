@@ -17,6 +17,7 @@
 		D533E7CC20D720AD0018F321 /* String+ISO8601Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = D533E7CB20D720AD0018F321 /* String+ISO8601Date.swift */; };
 		D533E7CE20D8077E0018F321 /* DataSnapshot+ValueDict.swift in Sources */ = {isa = PBXBuildFile; fileRef = D533E7CD20D8077E0018F321 /* DataSnapshot+ValueDict.swift */; };
 		D533E7D020D82E720018F321 /* RequestStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D533E7CF20D82E720018F321 /* RequestStore.swift */; };
+		D5435DFC20DB06CA005E0B06 /* DevNotes in Resources */ = {isa = PBXBuildFile; fileRef = D5435DFB20DB06CA005E0B06 /* DevNotes */; };
 		D570773220DAB0AD008872E5 /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D570773120DAB0AD008872E5 /* StatusView.swift */; };
 		D571742E20D33541004590C2 /* SegmentedControl+SelectedTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */; };
 		D581B13520DACAFD00BE16E2 /* StatusView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D581B13220DAC38C00BE16E2 /* StatusView.xib */; };
@@ -42,6 +43,7 @@
 		D533E7CB20D720AD0018F321 /* String+ISO8601Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+ISO8601Date.swift"; sourceTree = "<group>"; };
 		D533E7CD20D8077E0018F321 /* DataSnapshot+ValueDict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataSnapshot+ValueDict.swift"; sourceTree = "<group>"; };
 		D533E7CF20D82E720018F321 /* RequestStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestStore.swift; sourceTree = "<group>"; };
+		D5435DFB20DB06CA005E0B06 /* DevNotes */ = {isa = PBXFileReference; lastKnownFileType = text; path = DevNotes; sourceTree = "<group>"; };
 		D570773120DAB0AD008872E5 /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SegmentedControl+SelectedTitle.swift"; sourceTree = "<group>"; };
 		D581B13220DAC38C00BE16E2 /* StatusView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StatusView.xib; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 		D5C7088E20D03E56001FD1C1 = {
 			isa = PBXGroup;
 			children = (
+				D5435DFB20DB06CA005E0B06 /* DevNotes */,
 				D5C7089920D03E56001FD1C1 /* CuddleDispatch */,
 				D5C7089820D03E56001FD1C1 /* Products */,
 				3D2A9900658C0AFA376C541C /* Pods */,
@@ -107,9 +110,7 @@
 				D5042F7120D0878A007F0A5D /* CDNavigationController.swift */,
 				D5042F7720D09AC5007F0A5D /* CDRequestsViewController.swift */,
 				D533E7CF20D82E720018F321 /* RequestStore.swift */,
-				D533E7C920D437BE0018F321 /* CDRequestTableViewCell.swift */,
 				D5042F7820D09AC5007F0A5D /* CDAddEditRequestViewController.swift */,
-				D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */,
 				D5C708B220D0553E001FD1C1 /* UIViewController+Alerts.h */,
 				D5C708B320D0553F001FD1C1 /* UIViewController+Alerts.m */,
 				D533E7CB20D720AD0018F321 /* String+ISO8601Date.swift */,
@@ -136,6 +137,8 @@
 			children = (
 				D5042F6D20D0621B007F0A5D /* LaunchScreen.storyboard */,
 				D5042F6B20D0621A007F0A5D /* Main.storyboard */,
+				D533E7C920D437BE0018F321 /* CDRequestTableViewCell.swift */,
+				D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */,
 				D570773120DAB0AD008872E5 /* StatusView.swift */,
 				D581B13220DAC38C00BE16E2 /* StatusView.xib */,
 			);
@@ -225,6 +228,7 @@
 				D5042F7020D0621B007F0A5D /* LaunchScreen.storyboard in Resources */,
 				D581B13520DACAFD00BE16E2 /* StatusView.xib in Resources */,
 				D5C708A220D03E58001FD1C1 /* Assets.xcassets in Resources */,
+				D5435DFC20DB06CA005E0B06 /* DevNotes in Resources */,
 				D5C708AF20D046D4001FD1C1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

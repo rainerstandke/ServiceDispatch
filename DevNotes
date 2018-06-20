@@ -1,0 +1,8 @@
+
+Timer set for 9 am/pm to trigger function to clean database, with lastCleaned date on db, also called at app launch, return fromm background, with local lastCleaned as well
+
+look @ keyChain for passwords - store & generate
+
+UIRestoration -> scrollPosition, last entries in addEditCon
+
+local fallback for station list

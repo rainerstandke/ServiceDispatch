@@ -156,6 +156,11 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 		guard let request = requestForIndexPath(indexPath: indexPath) else { return cell }
 		reqCell.populate(from: request)
 		
+		reqCell.statusView.statusChangeCallBack = { [unowned self, request] status in
+			request.statusString = status.rawValue
+			self.dbRef.child("requests").child(request.dbKey).updateChildValues([K.DBFields.statusString:status.rawValue])
+		}
+		
 		return reqCell
 	}
 	

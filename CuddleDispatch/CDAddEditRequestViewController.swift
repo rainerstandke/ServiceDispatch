@@ -115,6 +115,7 @@ class CDAddEditRequestViewController: UIViewController {
 		} else {
 			// make new entry
 			valueDict[K.DBFields.expirationDate] = String.expirationString() // add new expiration
+			valueDict[K.DBFields.statusString] = CuddleStatus.none.rawValue
 			
 			let newDbEntry = dbRef.child("requests").childByAutoId()
 			newDbEntry.updateChildValues(valueDict)

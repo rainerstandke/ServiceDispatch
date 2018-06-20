@@ -18,27 +18,22 @@ class Request: NSObject {
 	
 	var dbKey: String // TODO: make optional to use as new? flag??
 	var station: String
-//	{
-//		didSet(newValue) {
-//			print("newValue: \(String(describing: newValue))")
-//			stationPrefix = station.components(separatedBy: "-").first ?? ""
-//		}
-//	}
 	var nurse: String
 	var carePartner: String
 	var ageGroup: String
 	var priority: String
 	var expirationDate: String? // set when first created, not updated when edited
-	//	var status: Enum? // TODO: implement inProgress, recently done (with automatic sunset 4 hrs later?)
 	var stationPrefix: String
+	var statusString: String
 	
-	init(dbKey: String, station: String, nurse: String, carePartner: String, ageGroup: String, priority: String) {
+	init(dbKey: String, station: String, nurse: String, carePartner: String, ageGroup: String, priority: String, statusString: String) {
 		self.dbKey = dbKey
 		self.station = station
 		self.nurse = nurse
 		self.carePartner = carePartner
 		self.ageGroup = ageGroup
 		self.priority = priority
+		self.statusString = statusString
 		
 		self.stationPrefix = station.components(separatedBy: "-").first ?? ""
 	}
@@ -47,8 +42,6 @@ class Request: NSObject {
 	init?(snapshot: DataSnapshot) {
 		// this expects a snapshot for one individual request
 		
-//		guard let dict = snapshot.value as? [String:Any] else { return nil }
-		
 		let dict = snapshot.valueDict()
 		
 		guard let station = dict["station"]  as? String else { return nil }
@@ -56,19 +49,19 @@ class Request: NSObject {
 		guard let carePartner = dict["carePartner"]  as? String else { return nil }
 		guard let ageGroup = dict["ageGroup"]  as? String else { return nil }
 		guard let priority = dict["priority"]  as? String else { return nil }
-		
+		guard let statusString = dict["statusString"]  as? String else { return nil }
+
 		self.dbKey = snapshot.key
 		self.station = station
 		self.nurse = nurse
 		self.carePartner = carePartner
 		self.ageGroup = ageGroup
 		self.priority = priority
-	
+		self.statusString = statusString
+		
 		self.stationPrefix = ""
 		super.init()
 		updateStationPrefix()
-		
-//		self.stationPrefix = station.components(separatedBy: "-").first ?? ""
 	}
 	
 	init?(dbKey: String, valuesDict:[String: String]) {
@@ -78,6 +71,7 @@ class Request: NSObject {
 		guard let carePartner = valuesDict["carePartner"] else { return nil }
 		guard let ageGroup = valuesDict["ageGroup"] else { return nil }
 		guard let priority = valuesDict["priority"] else { return nil }
+		guard let statusString = valuesDict["statusString"] else { return nil }
 		
 		self.dbKey = dbKey
 		self.station = station
@@ -85,14 +79,15 @@ class Request: NSObject {
 		self.carePartner = carePartner
 		self.ageGroup = ageGroup
 		self.priority = priority
-	
+		self.statusString = statusString
+		
 		self.stationPrefix = ""
 		super.init()
 		updateStationPrefix()
 	}
 	
 	convenience override init() {
-		self.init(dbKey: "", station: "", nurse: "", carePartner: "", ageGroup: "", priority: "")
+		self.init(dbKey: "", station: "", nurse: "", carePartner: "", ageGroup: "", priority: "", statusString: "")
 	}
 	
 	// MARK: -
@@ -114,6 +109,9 @@ class Request: NSObject {
 		}
 		if let priority = dict["priority"]  as? String {
 			self.priority = priority
+		}
+		if let statusString = dict["statusString"]  as? String {
+			self.statusString = statusString
 		}
 		
 		updateStationPrefix()
@@ -138,7 +136,7 @@ class Request: NSObject {
 	func makeDesciption() -> String {
 		var str = "\n" + station + " " + priority
 		str.append(" " + ageGroup + " " + nurse)
-		str.append(" " + carePartner)
+		str.append(" " + carePartner + " " + statusString)
 		if let expD = expirationDate {
 			str.append(" " + expD)
 		}

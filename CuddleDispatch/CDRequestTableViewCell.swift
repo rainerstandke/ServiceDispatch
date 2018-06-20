@@ -12,13 +12,10 @@ class CDRequestTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
 	@IBOutlet weak var stationLabel: UILabel!
@@ -26,6 +23,7 @@ class CDRequestTableViewCell: UITableViewCell {
 	@IBOutlet weak var ageGroupLabel: UILabel!
 	@IBOutlet weak var nurseNameLabel: UILabel!
 	@IBOutlet weak var cpNameLabel: UILabel!
+	@IBOutlet weak var statusView: StatusView!
 	
 	func populate(from request: Request) {
 		stationLabel.text = request.station
@@ -33,5 +31,6 @@ class CDRequestTableViewCell: UITableViewCell {
 		ageGroupLabel.text = request.ageGroup
 		nurseNameLabel.text = request.nurse
 		cpNameLabel.text = request.carePartner
+		statusView.setStatusWith(request.statusString)
 	}
 }

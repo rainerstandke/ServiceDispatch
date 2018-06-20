@@ -27,10 +27,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		return true
 	}
 
-	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+	func applicationWillEnterForeground(_ application: UIApplication) {
 		
-		return true
 	}
+	func applicationDidEnterBackground(_ application: UIApplication) {
+		
+	}
+	
+	// Mark: -
 
 	func createStationList() {
 		let dbRef = Database.database().reference()

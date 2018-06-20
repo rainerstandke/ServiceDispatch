@@ -19,6 +19,7 @@ import UIKit
 	public var status = CuddleStatus.none {
 		didSet(oldValue) {
 			changeStatusDisplay(from: oldValue)
+			statusChangeCallBack?(status)
 		}
 	}
 	
@@ -73,6 +74,18 @@ import UIKit
 		super.prepareForInterfaceBuilder()
 		xibSetup()
 		contentView?.prepareForInterfaceBuilder()
+	}
+	
+	public func setStatusWith(_ string: String) {
+		guard let newStatus = CuddleStatus.init(rawValue: string) else {
+			print("status string NG")
+			return
+		}
+		status = newStatus
+	}
+	
+	public func statusString() -> String {
+		return status.rawValue
 	}
 	
 	func changeStatusDisplay(from: CuddleStatus) {

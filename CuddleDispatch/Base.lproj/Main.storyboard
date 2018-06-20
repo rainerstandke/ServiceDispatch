@@ -267,6 +267,7 @@
                                             <outlet property="nurseNameLabel" destination="UQh-gA-hib" id="WJJ-Z4-JsO"/>
                                             <outlet property="priorityLabel" destination="zhm-Da-MoK" id="UAC-5C-khf"/>
                                             <outlet property="stationLabel" destination="kvg-1C-KMK" id="7b8-WF-me4"/>
+                                            <outlet property="statusView" destination="tfW-rT-ntV" id="rTb-48-lWS"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
