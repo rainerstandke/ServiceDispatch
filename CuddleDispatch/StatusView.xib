@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="StatusView" customModule="CuddleDispatch">
+            <connections>
+                <outlet property="leftImgVu" destination="hUs-cA-bsI" id="Kr4-Nl-Nkq"/>
+                <outlet property="rightImgVu" destination="871-4d-cPR" id="eth-0K-2Hl"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="StatusView" customModule="CuddleDispatch">
+            <rect key="frame" x="0.0" y="0.0" width="94" height="31"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="In" translatesAutoresizingMaskIntoConstraints="NO" id="hUs-cA-bsI">
+                    <rect key="frame" x="0.0" y="0.0" width="46" height="31"/>
+                    <gestureRecognizers/>
+                    <connections>
+                        <outletCollection property="gestureRecognizers" destination="fJX-XB-roA" appends="YES" id="0di-ay-vom"/>
+                    </connections>
+                </imageView>
+                <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Out" translatesAutoresizingMaskIntoConstraints="NO" id="871-4d-cPR">
+                    <rect key="frame" x="48" y="0.0" width="46" height="31"/>
+                    <gestureRecognizers/>
+                    <connections>
+                        <outletCollection property="gestureRecognizers" destination="17d-c9-cDz" appends="YES" id="yLl-sp-pep"/>
+                    </connections>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="871-4d-cPR" firstAttribute="leading" secondItem="hUs-cA-bsI" secondAttribute="trailing" constant="2" id="BaK-Bl-gg7"/>
+                <constraint firstItem="hUs-cA-bsI" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="Did-0Y-g3z"/>
+                <constraint firstItem="hUs-cA-bsI" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="ECQ-4n-i2z"/>
+                <constraint firstItem="871-4d-cPR" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="bottom" constant="-31" id="IGI-U4-gMI"/>
+                <constraint firstItem="871-4d-cPR" firstAttribute="width" secondItem="hUs-cA-bsI" secondAttribute="width" id="JLW-wm-Ymu"/>
+                <constraint firstItem="hUs-cA-bsI" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="bottom" constant="-31" id="RGa-Xc-DPX"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="871-4d-cPR" secondAttribute="bottom" id="ZOX-my-qWB"/>
+                <constraint firstItem="871-4d-cPR" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="fXK-rf-Rrz"/>
+                <constraint firstItem="hUs-cA-bsI" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="lU1-fV-17e"/>
+                <constraint firstItem="hUs-cA-bsI" firstAttribute="bottom" secondItem="871-4d-cPR" secondAttribute="bottom" id="pKp-on-yeM"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="871-4d-cPR" secondAttribute="trailing" id="uab-J5-RUf"/>
+                <constraint firstItem="hUs-cA-bsI" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="wa0-rr-Zxe"/>
+                <constraint firstItem="hUs-cA-bsI" firstAttribute="top" secondItem="871-4d-cPR" secondAttribute="top" id="wje-P6-rR7"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="leftImgVu" destination="hUs-cA-bsI" id="p06-54-C0x"/>
+                <outlet property="rightImgVu" destination="871-4d-cPR" id="4l2-FV-FZ0"/>
+            </connections>
+            <point key="canvasLocation" x="-496" y="-609.5"/>
+        </view>
+        <tapGestureRecognizer id="fJX-XB-roA" userLabel="left Tap Gesture Recognizer">
+            <connections>
+                <action selector="leftImgTappedWithSender:" destination="-1" id="P5D-BT-rrg"/>
+            </connections>
+        </tapGestureRecognizer>
+        <tapGestureRecognizer id="17d-c9-cDz" userLabel="right Tap Gesture Recognizer">
+            <connections>
+                <action selector="rightImgTappedWithSender:" destination="-1" id="jRC-k7-MM2"/>
+            </connections>
+        </tapGestureRecognizer>
+    </objects>
+    <resources>
+        <image name="In" width="576" height="438"/>
+        <image name="Out" width="576" height="438"/>
+    </resources>
+</document>

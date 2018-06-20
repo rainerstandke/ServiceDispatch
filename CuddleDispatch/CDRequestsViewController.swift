@@ -89,8 +89,8 @@ class CDRequestsViewController: UIViewController {
 		requestsRef.removeAllObservers()
 	}
 
-    // MARK: - Navigation for add / edit request
-
+	// MARK: - Navigation for add / edit request
+	
 	@objc func addNewRequest() {
 		// called from right nav item
 		performSegue(withIdentifier: K.SegueIdentifiers.addRequestSegue, sender: nil)
