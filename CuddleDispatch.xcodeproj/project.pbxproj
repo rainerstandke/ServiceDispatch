@@ -22,6 +22,7 @@
 		D5435E0420DB6A7B005E0B06 /* Calendar+NextTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435E0320DB6A7B005E0B06 /* Calendar+NextTime.swift */; };
 		D5435E0C20DB7124005E0B06 /* CuddleDispatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435E0B20DB7124005E0B06 /* CuddleDispatchTests.swift */; };
 		D5435E1520DB7272005E0B06 /* Calendar+NextTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435E0320DB6A7B005E0B06 /* Calendar+NextTime.swift */; };
+		D5435E1720DC2BEF005E0B06 /* CDGroupHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435E1620DC2BEF005E0B06 /* CDGroupHeaderTableViewCell.swift */; };
 		D570773220DAB0AD008872E5 /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D570773120DAB0AD008872E5 /* StatusView.swift */; };
 		D571742E20D33541004590C2 /* SegmentedControl+SelectedTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */; };
 		D581B13520DACAFD00BE16E2 /* StatusView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D581B13220DAC38C00BE16E2 /* StatusView.xib */; };
@@ -63,6 +64,7 @@
 		D5435E0920DB7124005E0B06 /* CuddleDispatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CuddleDispatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5435E0B20DB7124005E0B06 /* CuddleDispatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuddleDispatchTests.swift; sourceTree = "<group>"; };
 		D5435E0D20DB7124005E0B06 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5435E1620DC2BEF005E0B06 /* CDGroupHeaderTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDGroupHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		D570773120DAB0AD008872E5 /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SegmentedControl+SelectedTitle.swift"; sourceTree = "<group>"; };
 		D581B13220DAC38C00BE16E2 /* StatusView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StatusView.xib; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 				D5042F6D20D0621B007F0A5D /* LaunchScreen.storyboard */,
 				D5042F6B20D0621A007F0A5D /* Main.storyboard */,
 				D533E7C920D437BE0018F321 /* CDRequestTableViewCell.swift */,
+				D5435E1620DC2BEF005E0B06 /* CDGroupHeaderTableViewCell.swift */,
 				D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */,
 				D5435DFD20DB1D60005E0B06 /* XibView.swift */,
 				D570773120DAB0AD008872E5 /* StatusView.swift */,
@@ -368,6 +371,7 @@
 				D5F242B820D1D7520023071B /* Request.swift in Sources */,
 				D570773220DAB0AD008872E5 /* StatusView.swift in Sources */,
 				D5435E0420DB6A7B005E0B06 /* Calendar+NextTime.swift in Sources */,
+				D5435E1720DC2BEF005E0B06 /* CDGroupHeaderTableViewCell.swift in Sources */,
 				D5042F7A20D09AC6007F0A5D /* CDAddEditRequestViewController.swift in Sources */,
 				D533E7CE20D8077E0018F321 /* DataSnapshot+ValueDict.swift in Sources */,
 				D533E7D020D82E720018F321 /* RequestStore.swift in Sources */,

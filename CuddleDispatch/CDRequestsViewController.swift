@@ -206,6 +206,13 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 			break
 		}
 	}
+	
+	func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		guard let cell = tableView.dequeueReusableCell(withIdentifier: K.CellIDs.requestGroupHeaderCellID) as? CDGroupHeaderTableViewCell else { return nil }
+		guard section < sectionTitles.count else { return cell }
+		cell.halfFloorLabel.text = sectionTitles[section]
+		return cell.contentView
+	}
 
 	// helpers
 	func requestForIndexPath(indexPath: IndexPath?) -> Request? {

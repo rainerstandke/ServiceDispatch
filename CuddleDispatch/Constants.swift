@@ -31,5 +31,6 @@ struct K {
 	
 	struct CellIDs {
 		static let requestCellID = "requestCellID"
+		static let requestGroupHeaderCellID = "requestGroupHeaderCellID"
 	}
 }
