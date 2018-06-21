@@ -54,8 +54,17 @@ extension String {
 		}
 		
 		let expDate = calendar.date(from: expirationDateComps) ?? Date.distantPast
+		
+		
+		
+		
+		
 		let formatter = ISO8601DateFormatter()
 		let str = formatter.string(from: expDate)
 		return str
+	}
+	
+	func date() -> Date? {
+		return ISO8601DateFormatter().date(from: self)
 	}
 }

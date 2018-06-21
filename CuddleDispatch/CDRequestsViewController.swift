@@ -31,26 +31,78 @@ class CDRequestsViewController: UIViewController {
 		super.viewDidLoad()
 		
 		navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewRequest))
+		
+		reqTableVu.rowHeight = UITableViewAutomaticDimension
+		reqTableVu.estimatedRowHeight = 64
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
+		
 		// clean out completely b/c we'll get all new requests, even if previously displayed
+		
+		
+		cleanOutView()
+		
+//		store.resetStore()
+//		sectionTitles.removeAll()
+//		
+//		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
+//		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.expirationString(with: Date()))
+//
+//		// this fires for local edits as well...
+//		query.observe(.childAdded, with: { [unowned self] (snapshot) in
+//			guard let req = Request(snapshot: snapshot) else { return }
+//			
+//			self.store.addNewRequest(req)
+//			self.updateSectionTitles(with: [req.stationPrefix])
+//		})
+//		
+//		query.observe(.childChanged, with: { [unowned self] (snapshot) in
+//			// fires for external edits
+//			
+//			let affectedSectionTitles = self.store.updateWithSnapshot(snapshot)
+//			self.updateSectionTitles(with: affectedSectionTitles)
+//		})
+//		
+//		query.observe(.childRemoved, with: { [unowned self] (snapshot) in
+//			// fires for external deletions
+//			let status = self.store.deleteWithSnapshot(snapshot)
+//			
+//			switch status {
+//			case .failed:
+//				break
+//			case .needPartialReloadOf(let strs):
+//				strs.forEach { self.reloadTableDataInSectionTitled($0) }
+//				break
+//			case .needFullReloadWithNewSections(let strs):
+//				self.sectionTitles = strs
+//				self.reqTableVu.reloadData()
+//				break
+//			}
+//		})
+	}
+	
+	func cleanOutView() {
 		store.resetStore()
 		sectionTitles.removeAll()
 		
 		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
-		// TODO: create index in cloud to prevent from sorting/filtering locally
 		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.expirationString(with: Date()))
-
-		// this fires for local edits as well...
+		
 		query.observe(.childAdded, with: { [unowned self] (snapshot) in
-			self.addRequestsSnapshot(snapshot)
+			// this fires for local and remote edits
+			guard let req = Request(snapshot: snapshot) else { return }
+			
+			self.store.addNewRequest(req)
+			self.updateSectionTitles(with: [req.stationPrefix])
 		})
 		
 		query.observe(.childChanged, with: { [unowned self] (snapshot) in
 			// fires for external edits
-			self.processExternalChange(in: snapshot)
+			
+			let affectedSectionTitles = self.store.updateWithSnapshot(snapshot)
+			self.updateSectionTitles(with: affectedSectionTitles)
 		})
 		
 		query.observe(.childRemoved, with: { [unowned self] (snapshot) in
@@ -71,20 +123,6 @@ class CDRequestsViewController: UIViewController {
 		})
 	}
 	
-	// TODO: inline these 2?
-	func addRequestsSnapshot(_ snapshot: DataSnapshot) {
-		guard let req = Request(snapshot: snapshot) else { return }
-		
-		store.addNewRequest(req)
-		updateSectionTitles(with: [req.stationPrefix])
-	}
-	
-	func processExternalChange(in snapshot: DataSnapshot) {
-		
-		let affectedSectionTitles = store.updateWithSnapshot(snapshot)
-		updateSectionTitles(with: affectedSectionTitles)
-	}
-
 	override func viewWillDisappear(_ animated: Bool) {
 		requestsRef.removeAllObservers()
 	}
@@ -156,9 +194,13 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 		guard let request = requestForIndexPath(indexPath: indexPath) else { return cell }
 		reqCell.populate(from: request)
 		
-		reqCell.statusView.statusChangeCallBack = { [unowned self, request] status in
-			request.statusString = status.rawValue
-			self.dbRef.child("requests").child(request.dbKey).updateChildValues([K.DBFields.statusString:status.rawValue])
+		reqCell.statusChangeCallBack = { [unowned self] status, dbKey in
+			
+			guard let key = dbKey  else { print("no key"); return }
+			guard let req = self.store.requestWithKey(key) else { print("no req from store"); return }
+			
+			if req.statusString == status.rawValue { print("redundant"); return }
+			self.dbRef.child("requests").child(key).updateChildValues([K.DBFields.statusString:status.rawValue])
 		}
 		
 		return reqCell
@@ -167,11 +209,6 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 	func numberOfSections(in tableView: UITableView) -> Int {
 		return sectionTitles.count
 	}
-	
-	//	func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-	// TODO: possibly add empty string after each title for spacing?? but adds lots of complexity elsewhere
-	//		return sectionTitles
-	//	}
 	
 	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		if section < sectionTitles.count {

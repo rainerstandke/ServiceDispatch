@@ -10,14 +10,14 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="StatusView" customModule="CuddleDispatch">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="StatusView" customModule="CuddleDispatch" customModuleProvider="target">
             <connections>
-                <outlet property="leftImgVu" destination="hUs-cA-bsI" id="Kr4-Nl-Nkq"/>
-                <outlet property="rightImgVu" destination="871-4d-cPR" id="eth-0K-2Hl"/>
+                <outlet property="leftImgVu" destination="hUs-cA-bsI" id="Abf-tG-VRb"/>
+                <outlet property="rightImgVu" destination="871-4d-cPR" id="kBQ-nH-LZy"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="StatusView" customModule="CuddleDispatch">
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
             <rect key="frame" x="0.0" y="0.0" width="94" height="31"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
@@ -60,16 +60,16 @@
                 <outlet property="leftImgVu" destination="hUs-cA-bsI" id="p06-54-C0x"/>
                 <outlet property="rightImgVu" destination="871-4d-cPR" id="4l2-FV-FZ0"/>
             </connections>
-            <point key="canvasLocation" x="-496" y="-609.5"/>
+            <point key="canvasLocation" x="-776" y="-660"/>
         </view>
         <tapGestureRecognizer id="fJX-XB-roA" userLabel="left Tap Gesture Recognizer">
             <connections>
-                <action selector="leftImgTappedWithSender:" destination="-1" id="P5D-BT-rrg"/>
+                <action selector="leftImgTappedWithSender:" destination="-1" id="pQu-TU-CHv"/>
             </connections>
         </tapGestureRecognizer>
         <tapGestureRecognizer id="17d-c9-cDz" userLabel="right Tap Gesture Recognizer">
             <connections>
-                <action selector="rightImgTappedWithSender:" destination="-1" id="jRC-k7-MM2"/>
+                <action selector="rightImgTappedWithSender:" destination="-1" id="IJ3-Ns-9fv"/>
             </connections>
         </tapGestureRecognizer>
     </objects>

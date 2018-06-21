@@ -10,20 +10,15 @@ import UIKit
 
 class CDRequestTableViewCell: UITableViewCell {
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-
 	@IBOutlet weak var stationLabel: UILabel!
 	@IBOutlet weak var priorityLabel: UILabel!
 	@IBOutlet weak var ageGroupLabel: UILabel!
 	@IBOutlet weak var nurseNameLabel: UILabel!
 	@IBOutlet weak var cpNameLabel: UILabel!
-	@IBOutlet weak var statusView: StatusView!
+	
+	@IBOutlet weak var expiringView: UIImageView!
+	
+	var dbKey: String?
 	
 	func populate(from request: Request) {
 		stationLabel.text = request.station
@@ -31,6 +26,88 @@ class CDRequestTableViewCell: UITableViewCell {
 		ageGroupLabel.text = request.ageGroup
 		nurseNameLabel.text = request.nurse
 		cpNameLabel.text = request.carePartner
-		statusView.setStatusWith(request.statusString)
+		
+		self.dbKey = request.dbKey
+		
+		if statusString() != request.statusString {
+			setStatusWith(request.statusString)
+		}
+		
+		expiringView.isHidden = !request.isExpiring()
+	}
+
+	
+	// MARK: - Status Mechanism
+	
+	@IBOutlet weak var rightButton: UIButton!
+	@IBOutlet weak var leftButton: UIButton!
+	
+	public var status = CuddleStatus.none {
+		didSet(oldValue) {
+			changeStatusDisplay(from: oldValue)
+//			statusChangeCallBack?(status, dbKey)
+		}
+	}
+	
+	public var statusChangeCallBack: ((_ status: CuddleStatus, _ dbKey: String?) -> ())? = nil
+	
+	
+	@IBAction func leftImgTapped(sender: UIButton) {
+		if status == .none || status == .concluded {
+			status = .inProgress
+			statusChangeCallBack?(status, dbKey)
+		}
+	}
+
+	@IBAction func rightImgTapped(sender: UIButton) {
+		if status == .inProgress {
+			status = .concluded
+			statusChangeCallBack?(status, dbKey)
+		}
+	}
+	
+	public func setStatusWith(_ string: String) {
+		guard let newStatus = CuddleStatus.init(rawValue: string) else {
+			print("status string NG")
+			return
+		}
+		status = newStatus
+	}
+	
+	public func statusString() -> String {
+		return status.rawValue
+	}
+	
+	func changeStatusDisplay(from: CuddleStatus) {
+		switch status {
+		case .none:
+			leftButton.tintAdjustmentMode = .normal
+			leftButton.tintColor = self.tintColor
+			if from == .none {
+				rightButton.setImage(nil, for: .normal)
+			} else {
+				rightButton.setImage(UIImage.init(named: "Done.pdf"), for: .normal)
+				rightButton.tintColor = UIColor.black
+			}
+		case .inProgress:
+			rightButton.setImage(UIImage.init(named: "Out.pdf"), for: .normal)
+			rightButton.tintColor = self.tintColor
+			leftButton.tintAdjustmentMode = .dimmed
+		case .concluded:
+			leftButton.tintAdjustmentMode = .normal
+			rightButton.tintColor = UIColor.black
+			rightButton.setImage(UIImage.init(named: "Done.pdf"), for: .normal)
+		}
 	}
 }
+
+
+enum CuddleStatus: String {
+	case none // original, before first cuddle
+	case inProgress
+	case concluded // after first cuddle conclusion
+
+}
+
+
+

@@ -6,12 +6,17 @@
 //  Copyright © 2018 Rainer Standke. All rights reserved.
 //
 
+
+
+
+/*  https://medium.com/zenchef-tech-and-product/how-to-visualize-reusable-xibs-in-storyboards-using-ibdesignable-c0488c7f525d  */
 import UIKit
 
 @IBDesignable class StatusView: UIView {
 
 	var contentView:UIView?
-	@IBInspectable var nibName:String?
+//	@IBInspectable var nibName:String?
+	let nibName = "StatusView"
 	
 	@IBOutlet var leftImgVu: UIImageView!
 	@IBOutlet var rightImgVu: UIImageView!
@@ -38,31 +43,43 @@ import UIKit
 		}
 	}
 	
-	override func awakeFromNib() {
-		super.awakeFromNib()
-		xibSetup()
-		status = .none
-	}
+//	override func awakeFromNib() {
+//		super.awakeFromNib()
+////		xibSetup()
+//		status = .none
+//	}
 	
-	override init(frame: CGRect) {
-		super.init(frame: frame)
-	}
-	
+//	override init(frame: CGRect) {
+//		super.init(frame: frame)
+//		xibSetup()
+//		status = .none
+//
+//	}
+//
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
-	}
-	
-	func xibSetup() {
+		
 		guard let view = loadViewFromNib() else { return }
-		view.frame = bounds
-		view.autoresizingMask =
-			[.flexibleWidth, .flexibleHeight]
-		addSubview(view)
+		view.frame = self.bounds
+		self.addSubview(view)
 		contentView = view
+		
+		
+//		xibSetup()
+		status = .none
 	}
+
+//	func xibSetup() {
+//		guard let view = loadViewFromNib() else { return }
+//		view.frame = bounds
+//		view.autoresizingMask =
+//			[.flexibleWidth, .flexibleHeight]
+//		addSubview(view)
+////		contentView = view
+////		self.view.addSubview(view)
+//	}
 	
 	func loadViewFromNib() -> UIView? {
-		guard let nibName = nibName else { return nil }
 		let bundle = Bundle(for: type(of: self))
 		let nib = UINib(nibName: nibName, bundle: bundle)
 		return nib.instantiate(
@@ -72,7 +89,7 @@ import UIKit
 	
 	override func prepareForInterfaceBuilder() {
 		super.prepareForInterfaceBuilder()
-		xibSetup()
+//		xibSetup()
 		contentView?.prepareForInterfaceBuilder()
 	}
 	
@@ -112,8 +129,8 @@ import UIKit
 }
 
 
-enum CuddleStatus: String {
-	case none // original, before first cuddle
-	case inProgress
-	case concluded // after first cuddle conclusion
-}
+//enum CuddleStatus: String {
+//	case none // original, before first cuddle
+//	case inProgress
+//	case concluded // after first cuddle conclusion
+//}

@@ -18,6 +18,10 @@
 		D533E7CE20D8077E0018F321 /* DataSnapshot+ValueDict.swift in Sources */ = {isa = PBXBuildFile; fileRef = D533E7CD20D8077E0018F321 /* DataSnapshot+ValueDict.swift */; };
 		D533E7D020D82E720018F321 /* RequestStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D533E7CF20D82E720018F321 /* RequestStore.swift */; };
 		D5435DFC20DB06CA005E0B06 /* DevNotes in Resources */ = {isa = PBXBuildFile; fileRef = D5435DFB20DB06CA005E0B06 /* DevNotes */; };
+		D5435DFE20DB1D60005E0B06 /* XibView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435DFD20DB1D60005E0B06 /* XibView.swift */; };
+		D5435E0420DB6A7B005E0B06 /* Calendar+NextTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435E0320DB6A7B005E0B06 /* Calendar+NextTime.swift */; };
+		D5435E0C20DB7124005E0B06 /* CuddleDispatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435E0B20DB7124005E0B06 /* CuddleDispatchTests.swift */; };
+		D5435E1520DB7272005E0B06 /* Calendar+NextTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435E0320DB6A7B005E0B06 /* Calendar+NextTime.swift */; };
 		D570773220DAB0AD008872E5 /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D570773120DAB0AD008872E5 /* StatusView.swift */; };
 		D571742E20D33541004590C2 /* SegmentedControl+SelectedTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */; };
 		D581B13520DACAFD00BE16E2 /* StatusView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D581B13220DAC38C00BE16E2 /* StatusView.xib */; };
@@ -29,6 +33,16 @@
 		D5F242B520D1CDB10023071B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F242B420D1CDB10023071B /* Constants.swift */; };
 		D5F242B820D1D7520023071B /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F242B720D1D7520023071B /* Request.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D5435E0E20DB7124005E0B06 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5C7088F20D03E56001FD1C1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5C7089620D03E56001FD1C1;
+			remoteInfo = CuddleDispatch;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		3B532F7E00115AA2C03B3C3C /* Pods-CuddleDispatch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CuddleDispatch.release.xcconfig"; path = "Pods/Target Support Files/Pods-CuddleDispatch/Pods-CuddleDispatch.release.xcconfig"; sourceTree = "<group>"; };
@@ -44,6 +58,11 @@
 		D533E7CD20D8077E0018F321 /* DataSnapshot+ValueDict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataSnapshot+ValueDict.swift"; sourceTree = "<group>"; };
 		D533E7CF20D82E720018F321 /* RequestStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestStore.swift; sourceTree = "<group>"; };
 		D5435DFB20DB06CA005E0B06 /* DevNotes */ = {isa = PBXFileReference; lastKnownFileType = text; path = DevNotes; sourceTree = "<group>"; };
+		D5435DFD20DB1D60005E0B06 /* XibView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XibView.swift; sourceTree = "<group>"; };
+		D5435E0320DB6A7B005E0B06 /* Calendar+NextTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Calendar+NextTime.swift"; sourceTree = "<group>"; };
+		D5435E0920DB7124005E0B06 /* CuddleDispatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CuddleDispatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5435E0B20DB7124005E0B06 /* CuddleDispatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuddleDispatchTests.swift; sourceTree = "<group>"; };
+		D5435E0D20DB7124005E0B06 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D570773120DAB0AD008872E5 /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SegmentedControl+SelectedTitle.swift"; sourceTree = "<group>"; };
 		D581B13220DAC38C00BE16E2 /* StatusView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StatusView.xib; sourceTree = "<group>"; };
@@ -61,6 +80,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D5435E0620DB7124005E0B06 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D5C7089420D03E56001FD1C1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -81,11 +107,21 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		D5435E0A20DB7124005E0B06 /* CuddleDispatchTests */ = {
+			isa = PBXGroup;
+			children = (
+				D5435E0B20DB7124005E0B06 /* CuddleDispatchTests.swift */,
+				D5435E0D20DB7124005E0B06 /* Info.plist */,
+			);
+			path = CuddleDispatchTests;
+			sourceTree = "<group>";
+		};
 		D5C7088E20D03E56001FD1C1 = {
 			isa = PBXGroup;
 			children = (
 				D5435DFB20DB06CA005E0B06 /* DevNotes */,
 				D5C7089920D03E56001FD1C1 /* CuddleDispatch */,
+				D5435E0A20DB7124005E0B06 /* CuddleDispatchTests */,
 				D5C7089820D03E56001FD1C1 /* Products */,
 				3D2A9900658C0AFA376C541C /* Pods */,
 				F6AA6F42AE4BC375EE9783DE /* Frameworks */,
@@ -96,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				D5C7089720D03E56001FD1C1 /* CuddleDispatch.app */,
+				D5435E0920DB7124005E0B06 /* CuddleDispatchTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -109,11 +146,11 @@
 				D5C708B520D05569001FD1C1 /* SignInViewController.swift */,
 				D5042F7120D0878A007F0A5D /* CDNavigationController.swift */,
 				D5042F7720D09AC5007F0A5D /* CDRequestsViewController.swift */,
-				D533E7CF20D82E720018F321 /* RequestStore.swift */,
 				D5042F7820D09AC5007F0A5D /* CDAddEditRequestViewController.swift */,
 				D5C708B220D0553E001FD1C1 /* UIViewController+Alerts.h */,
 				D5C708B320D0553F001FD1C1 /* UIViewController+Alerts.m */,
 				D533E7CB20D720AD0018F321 /* String+ISO8601Date.swift */,
+				D5435E0320DB6A7B005E0B06 /* Calendar+NextTime.swift */,
 				D5F242B420D1CDB10023071B /* Constants.swift */,
 				D5F242B620D1D7320023071B /* Model */,
 			);
@@ -139,6 +176,7 @@
 				D5042F6B20D0621A007F0A5D /* Main.storyboard */,
 				D533E7C920D437BE0018F321 /* CDRequestTableViewCell.swift */,
 				D571742D20D33541004590C2 /* SegmentedControl+SelectedTitle.swift */,
+				D5435DFD20DB1D60005E0B06 /* XibView.swift */,
 				D570773120DAB0AD008872E5 /* StatusView.swift */,
 				D581B13220DAC38C00BE16E2 /* StatusView.xib */,
 			);
@@ -149,6 +187,7 @@
 		D5F242B620D1D7320023071B /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				D533E7CF20D82E720018F321 /* RequestStore.swift */,
 				D5F242B720D1D7520023071B /* Request.swift */,
 				D533E7CD20D8077E0018F321 /* DataSnapshot+ValueDict.swift */,
 			);
@@ -166,6 +205,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		D5435E0820DB7124005E0B06 /* CuddleDispatchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5435E1020DB7124005E0B06 /* Build configuration list for PBXNativeTarget "CuddleDispatchTests" */;
+			buildPhases = (
+				D5435E0520DB7124005E0B06 /* Sources */,
+				D5435E0620DB7124005E0B06 /* Frameworks */,
+				D5435E0720DB7124005E0B06 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D5435E0F20DB7124005E0B06 /* PBXTargetDependency */,
+			);
+			name = CuddleDispatchTests;
+			productName = CuddleDispatchTests;
+			productReference = D5435E0920DB7124005E0B06 /* CuddleDispatchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		D5C7089620D03E56001FD1C1 /* CuddleDispatch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D5C708A920D03E58001FD1C1 /* Build configuration list for PBXNativeTarget "CuddleDispatch" */;
@@ -195,6 +252,9 @@
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Rainer Standke";
 				TargetAttributes = {
+					D5435E0820DB7124005E0B06 = {
+						CreatedOnToolsVersion = 9.4.1;
+					};
 					D5C7089620D03E56001FD1C1 = {
 						CreatedOnToolsVersion = 9.4;
 						LastSwiftMigration = 0940;
@@ -215,11 +275,19 @@
 			projectRoot = "";
 			targets = (
 				D5C7089620D03E56001FD1C1 /* CuddleDispatch */,
+				D5435E0820DB7124005E0B06 /* CuddleDispatchTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D5435E0720DB7124005E0B06 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D5C7089520D03E56001FD1C1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -281,6 +349,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D5435E0520DB7124005E0B06 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5435E1520DB7272005E0B06 /* Calendar+NextTime.swift in Sources */,
+				D5435E0C20DB7124005E0B06 /* CuddleDispatchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D5C7089320D03E56001FD1C1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -290,6 +367,7 @@
 				D533E7CC20D720AD0018F321 /* String+ISO8601Date.swift in Sources */,
 				D5F242B820D1D7520023071B /* Request.swift in Sources */,
 				D570773220DAB0AD008872E5 /* StatusView.swift in Sources */,
+				D5435E0420DB6A7B005E0B06 /* Calendar+NextTime.swift in Sources */,
 				D5042F7A20D09AC6007F0A5D /* CDAddEditRequestViewController.swift in Sources */,
 				D533E7CE20D8077E0018F321 /* DataSnapshot+ValueDict.swift in Sources */,
 				D533E7D020D82E720018F321 /* RequestStore.swift in Sources */,
@@ -298,11 +376,20 @@
 				D5042F7220D0878A007F0A5D /* CDNavigationController.swift in Sources */,
 				D5C7089B20D03E56001FD1C1 /* AppDelegate.swift in Sources */,
 				D533E7CA20D437BE0018F321 /* CDRequestTableViewCell.swift in Sources */,
+				D5435DFE20DB1D60005E0B06 /* XibView.swift in Sources */,
 				D5F242B520D1CDB10023071B /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D5435E0F20DB7124005E0B06 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D5C7089620D03E56001FD1C1 /* CuddleDispatch */;
+			targetProxy = D5435E0E20DB7124005E0B06 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		D5042F6B20D0621A007F0A5D /* Main.storyboard */ = {
@@ -324,6 +411,42 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D5435E1120DB7124005E0B06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GBPX9EPXRH;
+				INFOPLIST_FILE = CuddleDispatchTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = biz.xmil.CuddleDispatchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D5435E1220DB7124005E0B06 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GBPX9EPXRH;
+				INFOPLIST_FILE = CuddleDispatchTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = biz.xmil.CuddleDispatchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		D5C708A720D03E58001FD1C1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -484,6 +607,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D5435E1020DB7124005E0B06 /* Build configuration list for PBXNativeTarget "CuddleDispatchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5435E1120DB7124005E0B06 /* Debug */,
+				D5435E1220DB7124005E0B06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D5C7089220D03E56001FD1C1 /* Build configuration list for PBXProject "CuddleDispatch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

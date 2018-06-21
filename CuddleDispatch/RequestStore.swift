@@ -116,17 +116,7 @@ class RequestStore {
 		return .needPartialReloadOf(sectionTitle: section, removedKey: request.dbKey)
 	}
 	
-	// result of a deletion that was triggrered by the user, locally
-	enum LocalRemovalResult {
-		case needPartialReloadOf(sectionTitle: String, removedKey: String)
-		case needFullReloadWithNewSections(sectionTitles: [String], removedKey: String)
-		case failed
-	}
-	
-	
-	
-	
-	private func requestWithKey(_ dbKey: String) -> Request? {
+	func requestWithKey(_ dbKey: String) -> Request? {
 		for section in store.keys {
 			if let req = store[section]?.first(where: { $0.dbKey == dbKey }) {
 				return req
@@ -155,4 +145,11 @@ class RequestStore {
 		}
 		return nil
 	}
+}
+
+// result of a deletion that was triggrered by the user, locally
+enum LocalRemovalResult {
+	case needPartialReloadOf(sectionTitle: String, removedKey: String)
+	case needFullReloadWithNewSections(sectionTitles: [String], removedKey: String)
+	case failed
 }
