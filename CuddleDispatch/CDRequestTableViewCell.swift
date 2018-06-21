@@ -33,6 +33,8 @@ class CDRequestTableViewCell: UITableViewCell {
 			setStatusWith(request.statusString)
 		}
 		
+		changeStatusDisplay(from: status)
+		
 		expiringView.isHidden = !request.isExpiring()
 	}
 
@@ -45,7 +47,6 @@ class CDRequestTableViewCell: UITableViewCell {
 	public var status = CuddleStatus.none {
 		didSet(oldValue) {
 			changeStatusDisplay(from: oldValue)
-//			statusChangeCallBack?(status, dbKey)
 		}
 	}
 	

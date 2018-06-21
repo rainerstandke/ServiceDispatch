@@ -27,6 +27,9 @@ class CDRequestsViewController: UIViewController {
 	
 	@IBOutlet weak var reqTableVu: UITableView!
 	
+	var refreshUITimer: Timer?
+	
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
@@ -40,52 +43,21 @@ class CDRequestsViewController: UIViewController {
 		super.viewWillAppear(animated)
 		
 		// clean out completely b/c we'll get all new requests, even if previously displayed
-		
-		
 		cleanOutView()
-		
-//		store.resetStore()
-//		sectionTitles.removeAll()
-//		
-//		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
-//		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.expirationString(with: Date()))
-//
-//		// this fires for local edits as well...
-//		query.observe(.childAdded, with: { [unowned self] (snapshot) in
-//			guard let req = Request(snapshot: snapshot) else { return }
-//			
-//			self.store.addNewRequest(req)
-//			self.updateSectionTitles(with: [req.stationPrefix])
-//		})
-//		
-//		query.observe(.childChanged, with: { [unowned self] (snapshot) in
-//			// fires for external edits
-//			
-//			let affectedSectionTitles = self.store.updateWithSnapshot(snapshot)
-//			self.updateSectionTitles(with: affectedSectionTitles)
-//		})
-//		
-//		query.observe(.childRemoved, with: { [unowned self] (snapshot) in
-//			// fires for external deletions
-//			let status = self.store.deleteWithSnapshot(snapshot)
-//			
-//			switch status {
-//			case .failed:
-//				break
-//			case .needPartialReloadOf(let strs):
-//				strs.forEach { self.reloadTableDataInSectionTitled($0) }
-//				break
-//			case .needFullReloadWithNewSections(let strs):
-//				self.sectionTitles = strs
-//				self.reqTableVu.reloadData()
-//				break
-//			}
-//		})
 	}
 	
 	func cleanOutView() {
+		// clear tableView data source, re-subscribe to online database updates, which will yield add-events for all entries right away
+		
 		store.resetStore()
 		sectionTitles.removeAll()
+		
+		let nextSixOrNine = Calendar.nextHardDate(onHours: [6, 9])
+		refreshUITimer = Timer.scheduledTimer(withTimeInterval: nextSixOrNine.timeIntervalSinceNow, repeats: false) { [unowned self] timer in
+			// at 6 and 9, force refresh of db records. at 6 for expiring soon, at 9 for expired requests
+			self.requestsRef.removeAllObservers()
+			self.cleanOutView()
+		}
 		
 		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
 		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.expirationString(with: Date()))
@@ -111,20 +83,19 @@ class CDRequestsViewController: UIViewController {
 			
 			switch status {
 			case .failed:
-				break
+				self.reqTableVu.reloadData()
 			case .needPartialReloadOf(let strs):
 				strs.forEach { self.reloadTableDataInSectionTitled($0) }
-				break
 			case .needFullReloadWithNewSections(let strs):
 				self.sectionTitles = strs
 				self.reqTableVu.reloadData()
-				break
 			}
 		})
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
 		requestsRef.removeAllObservers()
+		refreshUITimer?.invalidate()
 	}
 
 	// MARK: - Navigation for add / edit request

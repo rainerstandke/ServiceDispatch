@@ -143,9 +143,6 @@ class Request: NSObject {
 		guard let expStr = self.expirationDate else { return false }
 		guard let expDate = expStr.date() else { return false }
 		// is there more than 3 hours between now and the expiration date?
-		print("expDate.timeIntervalSinceNow : \(String(describing: expDate.timeIntervalSinceNow ))")
-//		return true
-		
 		return expDate.timeIntervalSinceNow < 10800
 	}
 	

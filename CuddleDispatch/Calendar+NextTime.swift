@@ -11,7 +11,7 @@ import Foundation
 
 extension Calendar {
 	
-	static func nextHardDate(at clockHour: Int, with gracePeriod: Int, for date: Date, in zone: TimeZone? = nil) -> Date {
+	static func nextHardDate(onHour clockHour: Int, withGracePeriod gracePeriod: Int, forDate date: Date, inTimeZone zone: TimeZone? = nil) -> Date {
 		// for result 9am or 9pm, expect clockHour 9
 		// the grace period is the the threshold after which we jump over the next hardTime.
 		// e.g. grace period 3 makes for 6am or 6 pm
@@ -50,5 +50,12 @@ extension Calendar {
 		
 		let expDate = calendar.date(from: dateComps) ?? Date.distantPast
 		return expDate
+	}
+	
+	static func nextHardDate(onHours hours:[Int], forDate date: Date? = nil, inTimeZone zone: TimeZone? = nil) -> Date {
+		let effectiveDate = date ?? Date()
+		let atSix = nextHardDate(onHour: 6, withGracePeriod: 0, forDate: effectiveDate, inTimeZone:zone)
+		let atNine = nextHardDate(onHour: 9, withGracePeriod: 0, forDate: effectiveDate, inTimeZone:zone)
+		return min(atNine, atSix)
 	}
 }
