@@ -26,11 +26,15 @@ class CDAddEditRequestViewController: UIViewController {
 	@IBOutlet weak var ageGroupSegCtrl: UISegmentedControl!
 	@IBOutlet weak var prioritySegCtrl: UISegmentedControl!
 	
+	@IBOutlet weak var bottomConstraint: NSLayoutConstraint!
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 		
 		setUpTitleBar()
 		prepPickerView()
+		
+		setupKeyboardNotifs()
     }
 	
 	func setUpTitleBar() {
@@ -143,6 +147,59 @@ extension CDAddEditRequestViewController: UIPickerViewDataSource, UIPickerViewDe
 	
 	func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
 		return stationStrings[row]
+	}
+}
+
+extension CDAddEditRequestViewController: UITextFieldDelegate {
+	
+	// deal with keyboard
+	
+	func setupKeyboardNotifs() {
+		NotificationCenter.default.addObserver(self, selector: #selector(prepForKeyboardAppear), name: Notification.Name.UIKeyboardWillShow, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(prepForKeyboardDisappear), name: Notification.Name.UIKeyboardWillHide, object: nil)
+	}
+	
+	@objc func prepForKeyboardAppear(notif: Notification) {
+		// animate constraint to make room for keyboard
+		
+		var aniDur = 0.25
+		var keyboardHeight = CGFloat(216.0)
+		
+		if let dict = notif.userInfo,
+			let keyBdBounds = dict["UIKeyboardBoundsUserInfoKey"] as? CGRect,
+			let dur = dict["UIKeyboardAnimationDurationUserInfoKey"] as? Double {
+			aniDur = dur
+			keyboardHeight = keyBdBounds.height
+		}
+		
+		UIView.animate(withDuration: aniDur) {
+			self.bottomConstraint.constant = keyboardHeight
+			self.view.layoutIfNeeded()
+		}
+	}
+	
+	@objc func prepForKeyboardDisappear(notif: Notification) {
+
+		var aniDur = 0.25
+		
+		if let dict = notif.userInfo,
+			let dur = dict["UIKeyboardAnimationDurationUserInfoKey"] as? Double {
+			aniDur = dur
+		}
+		
+		UIView.animate(withDuration: aniDur) {
+			self.bottomConstraint.constant = 0.0
+			self.view.layoutIfNeeded()
+		}
+	}
+	
+	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+		self.view.endEditing(true)
+	}
+	
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+		return true
 	}
 }
 

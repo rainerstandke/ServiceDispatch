@@ -17,3 +17,7 @@ sign-in, sign out
 could move inOut status logic into custom view with own nib, like this: https://medium.com/theappspace/swift-custom-uiview-with-xib-file-211bb8bbd6eb
 
 investigate db keepSynched: would that prevent new/added notifs when returning from add/edit vuCon? OTOH: going to / coming from background we need the full monty anyway
+
+priority textField: color background for urgency - call / label "Urgency"??
+
+if ever going to iOS 10: remove observers!
