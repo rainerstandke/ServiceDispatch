@@ -29,6 +29,7 @@ class CDRequestsViewController: UIViewController {
 	
 	var refreshUITimer: Timer?
 	
+	// MARK: -
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -37,30 +38,31 @@ class CDRequestsViewController: UIViewController {
 		
 		reqTableVu.rowHeight = UITableViewAutomaticDimension
 		reqTableVu.estimatedRowHeight = 64
+		
+		NotificationCenter.default.addObserver(self, selector: #selector(setupView), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(tearDownView), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
-		
-		// clean out completely b/c we'll get all new requests, even if previously displayed
-		cleanOutView()
+		setupView()
 	}
 	
-	func cleanOutView() {
-		// clear tableView data source, re-subscribe to online database updates, which will yield add-events for all entries right away
-		
+	@objc func setupView() {
+		// clear tableView data source, re-subscribe to online database updates, which will yield add-events for all entries right away, even if previously displayed
 		store.resetStore()
+
 		sectionTitles.removeAll()
 		
 		let nextSixOrNine = Calendar.nextHardDate(onHours: [6, 9])
 		refreshUITimer = Timer.scheduledTimer(withTimeInterval: nextSixOrNine.timeIntervalSinceNow, repeats: false) { [unowned self] timer in
 			// at 6 and 9, force refresh of db records. at 6 for expiring soon, at 9 for expired requests
 			self.requestsRef.removeAllObservers()
-			self.cleanOutView()
+			self.setupView()
 		}
 		
 		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
-		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.expirationString(with: Date()))
+		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.upcomingExpirationString())
 		
 		query.observe(.childAdded, with: { [unowned self] (snapshot) in
 			// this fires for local and remote edits
@@ -94,6 +96,11 @@ class CDRequestsViewController: UIViewController {
 	}
 	
 	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		tearDownView()
+	}
+	
+	@objc func tearDownView() {
 		requestsRef.removeAllObservers()
 		refreshUITimer?.invalidate()
 	}

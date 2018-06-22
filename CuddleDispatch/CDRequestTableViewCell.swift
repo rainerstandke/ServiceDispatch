@@ -40,6 +40,7 @@ class CDRequestTableViewCell: UITableViewCell {
 
 	
 	// MARK: - Status Mechanism
+	// note: could move this logic into custom view with own nib, like this: https://medium.com/theappspace/swift-custom-uiview-with-xib-file-211bb8bbd6eb
 	
 	@IBOutlet weak var rightButton: UIButton!
 	@IBOutlet weak var leftButton: UIButton!
@@ -50,8 +51,8 @@ class CDRequestTableViewCell: UITableViewCell {
 		}
 	}
 	
+	// execute upon status change, set from outside
 	public var statusChangeCallBack: ((_ status: CuddleStatus, _ dbKey: String?) -> ())? = nil
-	
 	
 	@IBAction func leftImgTapped(sender: UIButton) {
 		if status == .none || status == .concluded {
@@ -107,7 +108,6 @@ enum CuddleStatus: String {
 	case none // original, before first cuddle
 	case inProgress
 	case concluded // after first cuddle conclusion
-
 }
 
 

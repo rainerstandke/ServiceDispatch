@@ -10,10 +10,10 @@ local fallback for station list
 
 abandoned table sectionIndexTitles - but: possibly add empty string after each title for spacing?? but adds lots of complexity elsewhere
 
-
 keyboard: move BG, kind of KB
-
 
 sign-in, sign out
 
+could move inOut status logic into custom view with own nib, like this: https://medium.com/theappspace/swift-custom-uiview-with-xib-file-211bb8bbd6eb
 
+investigate db keepSynched: would that prevent new/added notifs when returning from add/edit vuCon? OTOH: going to / coming from background we need the full monty anyway

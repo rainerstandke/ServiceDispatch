@@ -149,8 +149,6 @@
 				D5042F7120D0878A007F0A5D /* CDNavigationController.swift */,
 				D5042F7720D09AC5007F0A5D /* CDRequestsViewController.swift */,
 				D5042F7820D09AC5007F0A5D /* CDAddEditRequestViewController.swift */,
-				D5C708B220D0553E001FD1C1 /* UIViewController+Alerts.h */,
-				D5C708B320D0553F001FD1C1 /* UIViewController+Alerts.m */,
 				D533E7CB20D720AD0018F321 /* String+ISO8601Date.swift */,
 				D5435E0320DB6A7B005E0B06 /* Calendar+NextTime.swift */,
 				D5F242B420D1CDB10023071B /* Constants.swift */,
@@ -182,6 +180,8 @@
 				D5435DFD20DB1D60005E0B06 /* XibView.swift */,
 				D570773120DAB0AD008872E5 /* StatusView.swift */,
 				D581B13220DAC38C00BE16E2 /* StatusView.xib */,
+				D5C708B220D0553E001FD1C1 /* UIViewController+Alerts.h */,
+				D5C708B320D0553F001FD1C1 /* UIViewController+Alerts.m */,
 			);
 			name = UI;
 			path = CuddleDispatch;
