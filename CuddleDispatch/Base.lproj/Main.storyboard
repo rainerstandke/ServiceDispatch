@@ -38,7 +38,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="top" spacing="19" translatesAutoresizingMaskIntoConstraints="NO" id="iM9-Ds-wUz">
-                                <rect key="frame" x="101" y="301.5" width="173" height="128"/>
+                                <rect key="frame" x="101" y="126" width="173" height="128"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="aKF-yw-8MT">
                                         <rect key="frame" x="0.0" y="0.0" width="173" height="30"/>
@@ -87,7 +87,7 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="iM9-Ds-wUz" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="32" id="15b-vX-XM6"/>
+                            <constraint firstItem="iM9-Ds-wUz" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-143.5" id="15b-vX-XM6"/>
                             <constraint firstItem="iM9-Ds-wUz" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="KjC-DK-KI9"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -252,7 +252,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="caY-jp-NYQ" secondAttribute="height" multiplier="45:31" id="kDU-CB-FZJ"/>
                                                     </constraints>
-                                                    <state key="normal" title="Button" image="In"/>
+                                                    <state key="normal" image="In"/>
                                                     <connections>
                                                         <action selector="leftImgTappedWithSender:" destination="WRu-8a-1Mm" eventType="touchUpInside" id="y0E-gY-VKI"/>
                                                     </connections>
