@@ -18,7 +18,7 @@ class CDNavigationController: UINavigationController, UINavigationControllerDele
 		let popped = super.popViewController(animated: animated)
 		
 		if let popped = popped {
-			if type(of: popped) == UIViewController.self { // TODO: replace with something else - possibly subclass
+			if type(of: popped) == CDRequestsViewController.self { // TODO: replace with something else - possibly subclass
 				let firebaseAuth = Auth.auth()
 				do {
 					try firebaseAuth.signOut()
