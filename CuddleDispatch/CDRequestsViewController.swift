@@ -48,17 +48,25 @@ class CDRequestsViewController: UIViewController {
 		setupView()
 	}
 	
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		tearDownView()
+	}
+	
 	@objc func setupView() {
 		// clear tableView data source, re-subscribe to online database updates, which will yield add-events for all entries right away, even if previously displayed
 		store.resetStore()
-
+		
 		sectionTitles.removeAll()
 		
 		let nextSixOrNine = Calendar.nextHardDate(onHours: [6, 9])
-		refreshUITimer = Timer.scheduledTimer(withTimeInterval: nextSixOrNine.timeIntervalSinceNow, repeats: false) { [unowned self] timer in
+		
+		refreshUITimer = Timer.scheduledTimer(withTimeInterval:	nextSixOrNine.timeIntervalSinceNow, repeats: false) { [unowned self] timer in
+			NSLog("timer fires")
 			// at 6 and 9, force refresh of db records. at 6 for expiring soon, at 9 for expired requests
 			self.requestsRef.removeAllObservers()
 			self.setupView()
+			self.callPrune()
 		}
 		
 		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
@@ -95,9 +103,26 @@ class CDRequestsViewController: UIViewController {
 		})
 	}
 	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		tearDownView()
+	func callPrune() {
+		
+		// delete expired requests
+		// seems to run twice - why?
+		// TODO: need to secure access? to function - via token or so? hard-coded URL not good.
+		
+		let configuration = URLSessionConfiguration.ephemeral
+		let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
+		guard let url = URL(string: "https://us-central1-cuddledispatch-d4299.cloudfunctions.net/pruneExpiredRequests") else { print("url failure"); return }
+		let task = session.dataTask(with: url, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) -> Void in
+			print("response: \(String(describing: response))")
+			print("data: \(String(describing: data))")
+			print("error: \(String(describing: error))")
+			if let resp = response as? HTTPURLResponse {
+				if resp.statusCode != 200 {
+					print("prune resp status: \(resp.statusCode)")
+				}
+			}
+		})
+		task.resume()
 	}
 	
 	@objc func tearDownView() {
