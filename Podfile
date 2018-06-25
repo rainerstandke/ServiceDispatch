@@ -10,5 +10,7 @@ pod 'Firebase/Core'
 pod 'Firebase/Database'
 pod 'Firebase/Auth'
 pod 'FirebaseUI/Database'
+pod 'Fabric'
+pod 'Crashlytics'
 
 end

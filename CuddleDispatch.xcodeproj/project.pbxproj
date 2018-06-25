@@ -17,7 +17,6 @@
 		D533E7CC20D720AD0018F321 /* String+ISO8601Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = D533E7CB20D720AD0018F321 /* String+ISO8601Date.swift */; };
 		D533E7CE20D8077E0018F321 /* DataSnapshot+ValueDict.swift in Sources */ = {isa = PBXBuildFile; fileRef = D533E7CD20D8077E0018F321 /* DataSnapshot+ValueDict.swift */; };
 		D533E7D020D82E720018F321 /* RequestStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D533E7CF20D82E720018F321 /* RequestStore.swift */; };
-		D5435DFC20DB06CA005E0B06 /* DevNotes in Resources */ = {isa = PBXBuildFile; fileRef = D5435DFB20DB06CA005E0B06 /* DevNotes */; };
 		D5435DFE20DB1D60005E0B06 /* XibView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435DFD20DB1D60005E0B06 /* XibView.swift */; };
 		D5435E0420DB6A7B005E0B06 /* Calendar+NextTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435E0320DB6A7B005E0B06 /* Calendar+NextTime.swift */; };
 		D5435E0C20DB7124005E0B06 /* CuddleDispatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5435E0B20DB7124005E0B06 /* CuddleDispatchTests.swift */; };
@@ -235,6 +234,7 @@
 				D5C7089420D03E56001FD1C1 /* Frameworks */,
 				D5C7089520D03E56001FD1C1 /* Resources */,
 				A554ABC0218DFD1C85371CF5 /* [CP] Embed Pods Frameworks */,
+				D54F830C20E17CFB00E2FEF9 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -298,7 +298,6 @@
 				D5042F6F20D0621B007F0A5D /* Main.storyboard in Resources */,
 				D5042F7020D0621B007F0A5D /* LaunchScreen.storyboard in Resources */,
 				D581B13520DACAFD00BE16E2 /* StatusView.xib in Resources */,
-				D5435DFC20DB06CA005E0B06 /* DevNotes in Resources */,
 				D58AB3D720DDCCC000A48296 /* Assets.xcassets in Resources */,
 				D5C708AF20D046D4001FD1C1 /* GoogleService-Info.plist in Resources */,
 			);
@@ -348,6 +347,19 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CuddleDispatch/Pods-CuddleDispatch-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		D54F830C20E17CFB00E2FEF9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\"  ";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -485,7 +497,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
