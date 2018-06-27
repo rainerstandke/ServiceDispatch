@@ -23,7 +23,6 @@ class CDRequestsViewController: UIViewController {
 	
 	lazy var dbRef: DatabaseReference = Database.database().reference()
 	lazy var requestsRef: DatabaseReference = dbRef.child("requests")
-	// TODO: call 'keepSynced'? should keep us from disconnecting while behind addEditVuCon - but would have to stop on app exit/bg etc
 	
 	@IBOutlet weak var reqTableVu: UITableView!
 	
@@ -41,6 +40,38 @@ class CDRequestsViewController: UIViewController {
 		
 		NotificationCenter.default.addObserver(self, selector: #selector(setupView), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(tearDownView), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+		
+		
+		
+		
+		
+		let button = UIButton(type: .roundedRect)
+		button.frame = CGRect(x: 20, y: 80, width: 100, height: 30)
+		button.setTitle("token", for: [])
+		button.addTarget(self, action: #selector(self.logToken), for: .touchUpInside)
+		view.addSubview(button)
+		
+		
+		
+		
+		
+	}
+	
+	@objc func logToken(_ sender: Any?) {
+		guard let user = Auth.auth().currentUser else { return }
+		user.getIDToken { (str, err) in
+			print("str: \(String(describing: str))")
+			print("err: \(String(describing: err))")
+			
+		}
+		user.getIDTokenResult(completion: { (authTokenRes, err) in
+			print("authTokenRes: \(String(describing: authTokenRes))")
+			print("err: \(String(describing: err))")
+			print("authTokenRes?.token: \(String(describing: authTokenRes?.token))")
+			print("authTokenRes?.claims: \(String(describing: authTokenRes?.claims))")
+			print("authTokenRes?.signInProvider: \(String(describing: authTokenRes?.signInProvider))")
+			
+		})
 	}
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -54,6 +85,7 @@ class CDRequestsViewController: UIViewController {
 	}
 	
 	@objc func setupView() {
+		print("setup")
 		// clear tableView data source, re-subscribe to online database updates, which will yield add-events for all entries right away, even if previously displayed
 		store.resetStore()
 		
@@ -61,53 +93,58 @@ class CDRequestsViewController: UIViewController {
 		
 		let nextSixOrNine = Calendar.nextHardDate(onHours: [6, 9])
 		
-		refreshUITimer = Timer.scheduledTimer(withTimeInterval:	nextSixOrNine.timeIntervalSinceNow, repeats: false) { [unowned self] timer in
+		refreshUITimer = Timer.scheduledTimer(withTimeInterval: nextSixOrNine.timeIntervalSinceNow, repeats: false) { [weak self] timer in
 			NSLog("timer fires")
 			// at 6 and 9, force refresh of db records. at 6 for expiring soon, at 9 for expired requests
-			self.requestsRef.removeAllObservers()
-			self.setupView()
-			self.callPrune()
+			self?.requestsRef.removeAllObservers()
+			self?.callPrune()
+			self?.setupView()
 		}
 		
 		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
 		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.upcomingExpirationString())
 		
-		query.observe(.childAdded, with: { [unowned self] (snapshot) in
+		query.observe(.childAdded, with: { [weak self] (snapshot) in
+			print("childAdded")
 			// this fires for local and remote edits
 			guard let req = Request(snapshot: snapshot) else { return }
 			
-			self.store.addNewRequest(req)
-			self.updateSectionTitles(with: [req.stationPrefix])
+			self?.store.addNewRequest(req)
+			self?.updateSectionTitles(with: [req.stationPrefix])
 		})
 		
 		query.observe(.childChanged, with: { [unowned self] (snapshot) in
+			print("childChanged")
 			// fires for external edits
 			
 			let affectedSectionTitles = self.store.updateWithSnapshot(snapshot)
 			self.updateSectionTitles(with: affectedSectionTitles)
 		})
 		
-		query.observe(.childRemoved, with: { [unowned self] (snapshot) in
+		query.observe(.childRemoved, with: { [weak self] (snapshot) in
+			print("childRemoved")
 			// fires for external deletions
-			let status = self.store.deleteWithSnapshot(snapshot)
+			guard let status = self?.store.deleteWithSnapshot(snapshot) else { return }
 			
 			switch status {
 			case .failed:
-				self.reqTableVu.reloadData()
+				self?.reqTableVu.reloadData()
 			case .needPartialReloadOf(let strs):
-				strs.forEach { self.reloadTableDataInSectionTitled($0) }
+				strs.forEach { self?.reloadTableDataInSectionTitled($0) }
 			case .needFullReloadWithNewSections(let strs):
-				self.sectionTitles = strs
-				self.reqTableVu.reloadData()
+				self?.sectionTitles = strs
+				self?.reqTableVu.reloadData()
 			}
 		})
+		
+		reqTableVu.reloadData()
 	}
 	
 	func callPrune() {
 		
 		// delete expired requests
 		// seems to run twice - why?
-		// TODO: need to secure access? to function - via token or so? hard-coded URL not good.
+		// TODO: need to secure access? to function - via token or so? hard-coded URL not good. see: https://github.com/firebase/functions-samples/tree/master/authorized-https-endpoint
 		
 		let configuration = URLSessionConfiguration.ephemeral
 		let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
@@ -126,6 +163,7 @@ class CDRequestsViewController: UIViewController {
 	}
 	
 	@objc func tearDownView() {
+		print("tearDownView")
 		requestsRef.removeAllObservers()
 		refreshUITimer?.invalidate()
 	}

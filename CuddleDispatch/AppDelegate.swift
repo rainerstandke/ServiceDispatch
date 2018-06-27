@@ -46,29 +46,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	// Mark: -
 
 	func createStationList() {
+		
 		let dbRef = Database.database().reference()
 		
-		dbRef.child("station-list").observeSingleEvent(of: .value) { (snapShot) in
-
-			if snapShot.exists(),
-				let stationListStr = snapShot.value as? String {
+		func useLocallyGeneratedStationStrings() {
+			let localStrs = { () -> [String] in
+				var strs = [String]()
+				for floor in 2...6 {
+					for cardinalDirection in ["E", "W"] {
+						for station in 1...6 {
+							strs.append(String(floor) + cardinalDirection + "-" + String(station))
+						}
+					}
+				}
+				return strs
+			}()
+			type(of: self).stationStrings = localStrs
+			dbRef.child("station-list").setValue(localStrs.joined(separator: " "))
+		}
+		
+		if Auth.auth().currentUser != nil {
+			dbRef.child("station-list").observeSingleEvent(of: .value) { (snapShot) in
+				
+				if snapShot.exists(),
+					let stationListStr = snapShot.value as? String {
 					let subStrings = stationListStr.split(separator: " ")
 					type(of: self).stationStrings = subStrings.map { return String($0) }
 				} else {
-				let stationList = { () -> String in
-					var result = ""
-					for floor in 2...6 {
-						for cardinalDirection in ["E", "W"] {
-							for station in 1...6 {
-								result.append(String(floor) + cardinalDirection + "-" + String(station) + " ")
-							}
-						}
-					}
-					return result
-				}()
-				
-				dbRef.child("station-list").setValue(stationList)
+					useLocallyGeneratedStationStrings()
+				}
 			}
+		} else {
+			// user not logged in
+			useLocallyGeneratedStationStrings()
 		}
 	}
 }

@@ -21,3 +21,5 @@ if ever going to iOS 10: remove observers!
 supress long press on section header (edits first item in section?)
 
 should show something - BG image? - indicating no current requests in table view
+
+lock down http function to our users: https://github.com/firebase/functions-samples/tree/master/authorized-https-endpoint

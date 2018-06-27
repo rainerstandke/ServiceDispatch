@@ -40,6 +40,7 @@ class CDAddEditRequestViewController: UIViewController {
     }
 	
 	 func addCrashBtn() {
+		// to trigger 'artificial' cash for crashlytics
 		let button = UIButton(type: .roundedRect)
 		button.frame = CGRect(x: 20, y: 80, width: 100, height: 30)
 		button.setTitle("Crash", for: [])

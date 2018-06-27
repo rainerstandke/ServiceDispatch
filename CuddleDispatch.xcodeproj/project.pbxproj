@@ -141,8 +141,6 @@
 		D5C7089920D03E56001FD1C1 /* CuddleDispatch */ = {
 			isa = PBXGroup;
 			children = (
-				D5C708B820D055C9001FD1C1 /* UI */,
-				D5C708B720D055A5001FD1C1 /* Supporting Files */,
 				D5C7089A20D03E56001FD1C1 /* AppDelegate.swift */,
 				D5042F7120D0878A007F0A5D /* CDNavigationController.swift */,
 				D5C708B520D05569001FD1C1 /* SignInViewController.swift */,
@@ -151,6 +149,8 @@
 				D533E7CB20D720AD0018F321 /* String+ISO8601Date.swift */,
 				D5435E0320DB6A7B005E0B06 /* Calendar+NextTime.swift */,
 				D5F242B420D1CDB10023071B /* Constants.swift */,
+				D5C708B820D055C9001FD1C1 /* UI */,
+				D5C708B720D055A5001FD1C1 /* Supporting Files */,
 				D5F242B620D1D7320023071B /* Model */,
 			);
 			path = CuddleDispatch;
