@@ -9,12 +9,6 @@
 import UIKit
 import Firebase
 
-// TODO:
-// for expiring soon, look at local time -> after six? filter Requests for expiring in less than 3 hours
-// each time reqlist con comes on screen set a timer for the next time 6 rolls around (invalidate each time it disappears, too)
-
-// for database cleanup, a similar mechanism could call into google function to check if db has been cleaned -> at 9. store flag last clean time
-
 class CDRequestsViewController: UIViewController {
 	
 	var sectionTitles = [String]()
@@ -44,19 +38,21 @@ class CDRequestsViewController: UIViewController {
 		
 		
 		
+		// TODO: loose these 2:
+		let tokenButton = UIButton(type: .roundedRect)
+		tokenButton.frame = CGRect(x: 20, y: 80, width: 100, height: 30)
+		tokenButton.setTitle("token", for: [])
+		tokenButton.addTarget(self, action: #selector(logToken), for: .touchUpInside)
+		view.addSubview(tokenButton)
 		
-		let button = UIButton(type: .roundedRect)
-		button.frame = CGRect(x: 20, y: 80, width: 100, height: 30)
-		button.setTitle("token", for: [])
-		button.addTarget(self, action: #selector(self.logToken), for: .touchUpInside)
-		view.addSubview(button)
-		
-		
-		
-		
-		
+		let pruneButton = UIButton(type: .roundedRect)
+		pruneButton.frame = CGRect(x: 20, y: 160, width: 100, height: 30)
+		pruneButton.setTitle("prune", for: [])
+		pruneButton.addTarget(self, action: #selector(callPruneFunction), for: .touchUpInside)
+		view.addSubview(pruneButton)
 	}
 	
+	// TODO: loose this
 	@objc func logToken(_ sender: Any?) {
 		guard let user = Auth.auth().currentUser else { return }
 		user.getIDToken { (str, err) in
@@ -70,7 +66,6 @@ class CDRequestsViewController: UIViewController {
 			print("authTokenRes?.token: \(String(describing: authTokenRes?.token))")
 			print("authTokenRes?.claims: \(String(describing: authTokenRes?.claims))")
 			print("authTokenRes?.signInProvider: \(String(describing: authTokenRes?.signInProvider))")
-			
 		})
 	}
 	
@@ -97,7 +92,7 @@ class CDRequestsViewController: UIViewController {
 			NSLog("timer fires")
 			// at 6 and 9, force refresh of db records. at 6 for expiring soon, at 9 for expired requests
 			self?.requestsRef.removeAllObservers()
-			self?.callPrune()
+			self?.callPruneFunction()
 			self?.setupView()
 		}
 		
@@ -140,26 +135,34 @@ class CDRequestsViewController: UIViewController {
 		reqTableVu.reloadData()
 	}
 	
-	func callPrune() {
+	@objc func callPruneFunction() {
 		
-		// delete expired requests
-		// seems to run twice - why?
-		// TODO: need to secure access? to function - via token or so? hard-coded URL not good. see: https://github.com/firebase/functions-samples/tree/master/authorized-https-endpoint
+		// delete expired requests, calling a firebase function
 		
-		let configuration = URLSessionConfiguration.ephemeral
-		let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
-		guard let url = URL(string: "https://us-central1-cuddledispatch-d4299.cloudfunctions.net/pruneExpiredRequests") else { print("url failure"); return }
-		let task = session.dataTask(with: url, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) -> Void in
-			print("response: \(String(describing: response))")
-			print("data: \(String(describing: data))")
-			print("error: \(String(describing: error))")
-			if let resp = response as? HTTPURLResponse {
-				if resp.statusCode != 200 {
-					print("prune resp status: \(resp.statusCode)")
+		guard let user = Auth.auth().currentUser else { return }
+		user.getIDToken { (inTokenStr, err) in
+			
+			if let error  = err { print("getTokeError: \(error)"); return }
+			
+			guard let tokenStr = inTokenStr else { print("no token: \(String(describing: inTokenStr))"); return }
+			
+			let configuration = URLSessionConfiguration.ephemeral
+			let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
+			guard let url = URL(string: "https://us-central1-cuddledispatch-d4299.cloudfunctions.net/pruneExpiredRequests") else { print("url failure"); return }
+			
+			var request = URLRequest(url: url)
+			request.addValue("Bearer " + tokenStr, forHTTPHeaderField: "Authorization")
+			
+			let task = session.dataTask(with: request, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) -> Void in
+				print("response: \(String(describing: response))")
+				if let resp = response as? HTTPURLResponse {
+					if resp.statusCode != 200 {
+						print("prune resp status: \(resp.statusCode)")
+					}
 				}
-			}
-		})
-		task.resume()
+			})
+			task.resume()
+		}
 	}
 	
 	@objc func tearDownView() {
