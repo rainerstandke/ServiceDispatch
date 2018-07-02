@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_CuddleDispatchVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_CuddleDispatchVersionString[];
+FOUNDATION_EXPORT double Pods_ServiceDispatchVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_ServiceDispatchVersionString[];
 

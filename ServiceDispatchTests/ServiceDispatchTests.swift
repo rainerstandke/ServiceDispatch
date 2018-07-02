@@ -1,6 +1,6 @@
 //
-//  CuddleDispatchTests.swift
-//  CuddleDispatchTests
+//  ServiceDispatchTests.swift
+//  ServiceDispatchTests
 //
 //  Created by Rainer Standke on 6/20/18.
 //  Copyright © 2018 Rainer Standke. All rights reserved.
@@ -9,7 +9,7 @@
 import XCTest
 
 
-class CuddleDispatchTests: XCTestCase {
+class ServiceDispatchTests: XCTestCase {
 	
 	var dateFormatter = DateFormatter()
 	

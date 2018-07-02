@@ -1,6 +1,6 @@
 //
 //  CDRequestTableViewCell.swift
-//  CuddleDispatch
+//  ServiceDispatch
 //
 //  Created by Rainer Standke on 6/15/18.
 //  Copyright © 2018 Rainer Standke. All rights reserved.
@@ -45,14 +45,14 @@ class CDRequestTableViewCell: UITableViewCell {
 	@IBOutlet weak var rightButton: UIButton!
 	@IBOutlet weak var leftButton: UIButton!
 	
-	public var status = CuddleStatus.none {
+	public var status = ServiceStatus.none {
 		didSet(oldValue) {
 			changeStatusDisplay(from: oldValue)
 		}
 	}
 	
 	// execute upon status change, set from outside
-	public var statusChangeCallBack: ((_ status: CuddleStatus, _ dbKey: String?) -> ())? = nil
+	public var statusChangeCallBack: ((_ status: ServiceStatus, _ dbKey: String?) -> ())? = nil
 	
 	@IBAction func leftImgTapped(sender: UIButton) {
 		if status == .none || status == .concluded {
@@ -69,7 +69,7 @@ class CDRequestTableViewCell: UITableViewCell {
 	}
 	
 	public func setStatusWith(_ string: String) {
-		guard let newStatus = CuddleStatus.init(rawValue: string) else {
+		guard let newStatus = ServiceStatus.init(rawValue: string) else {
 			print("status string NG")
 			return
 		}
@@ -80,7 +80,7 @@ class CDRequestTableViewCell: UITableViewCell {
 		return status.rawValue
 	}
 	
-	func changeStatusDisplay(from: CuddleStatus) {
+	func changeStatusDisplay(from: ServiceStatus) {
 		switch status {
 		case .none:
 			leftButton.tintAdjustmentMode = .normal
@@ -104,10 +104,10 @@ class CDRequestTableViewCell: UITableViewCell {
 }
 
 
-enum CuddleStatus: String {
-	case none // original, before first cuddle
+enum ServiceStatus: String {
+	case none // original, before first Service
 	case inProgress
-	case concluded // after first cuddle conclusion
+	case concluded // after first Service conclusion
 }
 
 

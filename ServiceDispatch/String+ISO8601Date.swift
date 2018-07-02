@@ -1,6 +1,6 @@
 //
 //  String+ISO8603Date.swift
-//  CuddleDispatch
+//  ServiceDispatch
 //
 //  Created by Rainer Standke on 6/17/18.
 //  Copyright © 2018 Rainer Standke. All rights reserved.

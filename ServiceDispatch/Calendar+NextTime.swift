@@ -1,6 +1,6 @@
 //
 //  Calendar+NextTime.swift
-//  CuddleDispatch
+//  ServiceDispatch
 //
 //  Created by Rainer Standke on 6/20/18.
 //  Copyright © 2018 Rainer Standke. All rights reserved.

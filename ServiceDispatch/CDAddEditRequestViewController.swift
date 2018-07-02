@@ -1,6 +1,6 @@
 //
 //  CDAddEditRequestViewController.swift
-//  CuddleDispatch
+//  ServiceDispatch
 //
 //  Created by Rainer Standke on 6/12/18.
 //  Copyright © 2018 Rainer Standke. All rights reserved.
@@ -134,7 +134,7 @@ class CDAddEditRequestViewController: UIViewController {
 		} else {
 			// make new entry
 			valueDict[K.DBFields.expirationDate] = String.expirationString() // add new expiration
-			valueDict[K.DBFields.statusString] = CuddleStatus.none.rawValue
+			valueDict[K.DBFields.statusString] = ServiceStatus.none.rawValue
 			
 			let newDbEntry = dbRef.child("requests").childByAutoId()
 			newDbEntry.updateChildValues(valueDict)

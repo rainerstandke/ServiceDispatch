@@ -1,6 +1,6 @@
 //
 //  StatusView.swift
-//  CuddleDispatch
+//  ServiceDispatch
 //
 //  Created by Rainer Standke on 6/20/18.
 //  Copyright © 2018 Rainer Standke. All rights reserved.
@@ -21,14 +21,14 @@ import UIKit
 	@IBOutlet var leftImgVu: UIImageView!
 	@IBOutlet var rightImgVu: UIImageView!
 	
-	public var status = CuddleStatus.none {
+	public var status = ServiceStatus.none {
 		didSet(oldValue) {
 			changeStatusDisplay(from: oldValue)
 			statusChangeCallBack?(status)
 		}
 	}
 	
-	public var statusChangeCallBack: ((_ status: CuddleStatus) -> ())? = nil
+	public var statusChangeCallBack: ((_ status: ServiceStatus) -> ())? = nil
 	
 	
 	@IBAction func leftImgTapped(sender: UITapGestureRecognizer) {
@@ -94,7 +94,7 @@ import UIKit
 	}
 	
 	public func setStatusWith(_ string: String) {
-		guard let newStatus = CuddleStatus.init(rawValue: string) else {
+		guard let newStatus = ServiceStatus.init(rawValue: string) else {
 			print("status string NG")
 			return
 		}
@@ -105,7 +105,7 @@ import UIKit
 		return status.rawValue
 	}
 	
-	func changeStatusDisplay(from: CuddleStatus) {
+	func changeStatusDisplay(from: ServiceStatus) {
 		switch status {
 		case .none:
 			leftImgVu.tintAdjustmentMode = .normal
@@ -129,8 +129,8 @@ import UIKit
 }
 
 
-//enum CuddleStatus: String {
-//	case none // original, before first cuddle
+//enum ServiceStatus: String {
+//	case none // original, before first Service
 //	case inProgress
-//	case concluded // after first cuddle conclusion
+//	case concluded // after first Service conclusion
 //}
