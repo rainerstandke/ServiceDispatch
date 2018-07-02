@@ -31,8 +31,9 @@ class CuddleDispatchTests: XCTestCase {
 		
 		(0 ... 23).forEach { hour in
 			let inDate = Date.init(timeIntervalSinceReferenceDate: Double(hour) * 3600.0)
-			let outDate = Calendar.nextHardDate(onHours: [6, 9], forDate: inDate, inTimeZone: zone)
-			dateStrs.append("hour \(hour): " + outDate.description)
+			let outDate = Calendar.nextHardDate(onHours: [parms.firstHour, parms.secondHour], forDate: inDate, inTimeZone: zone)
+			XCTAssertNotNil(outDate, "expected date")
+			dateStrs.append("hour \(hour): " + outDate!.description)
 		}
 		
 		let passing = parms.expectedResult == dateStrs

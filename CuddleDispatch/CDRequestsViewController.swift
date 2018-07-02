@@ -20,7 +20,11 @@ class CDRequestsViewController: UIViewController {
 	
 	@IBOutlet weak var reqTableVu: UITableView!
 	
-	var refreshUITimer: Timer?
+	var refreshUITimer: Timer? {
+		didSet {
+			NSLog("timer set: \(String(describing: refreshUITimer))")
+		}
+	}
 	
 	// MARK: -
 	
@@ -86,21 +90,27 @@ class CDRequestsViewController: UIViewController {
 		
 		sectionTitles.removeAll()
 		
-		let nextSixOrNine = Calendar.nextHardDate(onHours: [6, 9])
-		
-		refreshUITimer = Timer.scheduledTimer(withTimeInterval: nextSixOrNine.timeIntervalSinceNow, repeats: false) { [weak self] timer in
-			NSLog("timer fires")
-			// at 6 and 9, force refresh of db records. at 6 for expiring soon, at 9 for expired requests
-			self?.requestsRef.removeAllObservers()
-			self?.callPruneFunction()
-			self?.setupView()
+		refreshUITimer?.invalidate()
+		DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+			// delay 3.0 avoids double-firing
+			// TODO: make this in the delayed block!
+			guard let nextSixOrNine = Calendar.nextHardDate(onHours: [6, 9]) else { print("no next date"); return }
+			let timeInterval = nextSixOrNine.timeIntervalSinceNow
+			NSLog("timeInterval: \(String(describing: timeInterval))")
+			self?.refreshUITimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: false) { [weak self] timer in
+				NSLog("timer fires")
+				// at 6 and 9, force refresh of db records. at 6 for expiring soon, at 9 for expired requests
+				self?.requestsRef.removeAllObservers()
+				self?.callPruneFunction()
+				self?.setupView()
+			}
 		}
 		
 		// NOTE: startingAt only works if ordered, and ordering seems to drop us down one nesting level
 		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.upcomingExpirationString())
 		
 		query.observe(.childAdded, with: { [weak self] (snapshot) in
-			print("childAdded")
+			print("childAdded") // TODO: loose x 3!
 			// this fires for local and remote edits
 			guard let req = Request(snapshot: snapshot) else { return }
 			
@@ -139,6 +149,22 @@ class CDRequestsViewController: UIViewController {
 		
 		// delete expired requests, calling a firebase function
 		
+		let uDefs = UserDefaults.standard
+		
+		if let nextPruneDate = uDefs.object(forKey: K.UDefs.nextPruneDate) as? Date {
+			if nextPruneDate.timeIntervalSinceNow > 2 {
+				// more than 2 secs left until next prune time
+				print("not prune time yet: \(nextPruneDate.timeIntervalSinceNow)")
+				return
+			}
+		}
+		print("past time -> pruning")
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+			// timer tends to fire early - delay prevents setting next prune time to something merely seconds away
+			uDefs.set(Calendar.nextHardDate(onHours: [9]), forKey: K.UDefs.nextPruneDate)
+		}
+		
 		guard let user = Auth.auth().currentUser else { return }
 		user.getIDToken { (inTokenStr, err) in
 			
@@ -154,9 +180,10 @@ class CDRequestsViewController: UIViewController {
 			request.addValue("Bearer " + tokenStr, forHTTPHeaderField: "Authorization")
 			
 			let task = session.dataTask(with: request, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) -> Void in
-				print("response: \(String(describing: response))")
 				if let resp = response as? HTTPURLResponse {
-					if resp.statusCode != 200 {
+					if resp.statusCode == 200 {
+						print("pruned OK")
+					} else {
 						print("prune resp status: \(resp.statusCode)")
 					}
 				}

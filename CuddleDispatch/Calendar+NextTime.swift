@@ -52,10 +52,9 @@ extension Calendar {
 		return expDate
 	}
 	
-	static func nextHardDate(onHours hours:[Int], forDate date: Date? = nil, inTimeZone zone: TimeZone? = nil) -> Date {
+	static func nextHardDate(onHours hours:[Int], forDate date: Date? = nil, inTimeZone zone: TimeZone? = nil) -> Date? {
 		let effectiveDate = date ?? Date()
-		let atSix = nextHardDate(onHour: 6, withGracePeriod: 0, forDate: effectiveDate, inTimeZone:zone)
-		let atNine = nextHardDate(onHour: 9, withGracePeriod: 0, forDate: effectiveDate, inTimeZone:zone)
-		return min(atNine, atSix)
+		let dates = hours.map { nextHardDate(onHour: $0, withGracePeriod: 0, forDate: effectiveDate, inTimeZone:zone) }
+		return dates.min()
 	}
 }

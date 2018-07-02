@@ -33,4 +33,8 @@ struct K {
 		static let requestCellID = "requestCellID"
 		static let requestGroupHeaderCellID = "requestGroupHeaderCellID"
 	}
+	
+	struct UDefs {
+		static let nextPruneDate = "nextPruneDate"
+	}
 }
