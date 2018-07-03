@@ -583,7 +583,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = ECC3E72E749F973A322D8242 /* Pods-ServiceDispatch.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GBPX9EPXRH;
@@ -606,7 +605,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54060767717EB5F721FC0DE1 /* Pods-ServiceDispatch.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GBPX9EPXRH;

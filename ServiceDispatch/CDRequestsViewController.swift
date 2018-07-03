@@ -150,7 +150,7 @@ class CDRequestsViewController: UIViewController {
 		// delete expired requests, calling a firebase function
 		
 		let uDefs = UserDefaults.standard
-		
+
 		if let nextPruneDate = uDefs.object(forKey: K.UDefs.nextPruneDate) as? Date {
 			if nextPruneDate.timeIntervalSinceNow > 2 {
 				// more than 2 secs left until next prune time
@@ -174,7 +174,7 @@ class CDRequestsViewController: UIViewController {
 			
 			let configuration = URLSessionConfiguration.ephemeral
 			let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
-			guard let url = URL(string: "https://us-central1-Servicedispatch-d4299.cloudfunctions.net/pruneExpiredRequests") else { print("url failure"); return }
+			guard let url = URL(string: "https://us-central1-cuddledispatch-d4299.cloudfunctions.net/pruneExpiredRequests") else { print("url failure"); return }
 			
 			var request = URLRequest(url: url)
 			request.addValue("Bearer " + tokenStr, forHTTPHeaderField: "Authorization")
