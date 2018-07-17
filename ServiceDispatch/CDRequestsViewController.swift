@@ -22,7 +22,13 @@ class CDRequestsViewController: UIViewController {
 	
 	var refreshUITimer: Timer? {
 		didSet {
-			NSLog("timer set: \(String(describing: refreshUITimer))")
+			NSLog("refreshUITimer set: \(String(describing: refreshUITimer))")
+		}
+	}
+	
+	var reloadDataTimer: Timer? {
+		didSet {
+			NSLog("reloadDataTimer set: \(String(describing: reloadDataTimer))")
 		}
 	}
 	
@@ -39,51 +45,15 @@ class CDRequestsViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(setupView), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(tearDownView), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
 		
-		
-		
-//		// TODO: loose these 2:
-//		let tokenButton = UIButton(type: .roundedRect)
-//		tokenButton.frame = CGRect(x: 20, y: 80, width: 100, height: 30)
-//		tokenButton.setTitle("token", for: [])
-//		tokenButton.addTarget(self, action: #selector(logToken), for: .touchUpInside)
-//		view.addSubview(tokenButton)
-//		
-//		let pruneButton = UIButton(type: .roundedRect)
-//		pruneButton.frame = CGRect(x: 20, y: 160, width: 100, height: 30)
-//		pruneButton.setTitle("prune", for: [])
-//		pruneButton.addTarget(self, action: #selector(callPruneFunction), for: .touchUpInside)
-//		view.addSubview(pruneButton)
-	}
-	
-	// TODO: loose this
-//	@objc func logToken(_ sender: Any?) {
-//		guard let user = Auth.auth().currentUser else { return }
-//		user.getIDToken { (str, err) in
-//			print("str: \(String(describing: str))")
-//			print("err: \(String(describing: err))")
-//
-//		}
-//		user.getIDTokenResult(completion: { (authTokenRes, err) in
-//			print("authTokenRes: \(String(describing: authTokenRes))")
-//			print("err: \(String(describing: err))")
-//			print("authTokenRes?.token: \(String(describing: authTokenRes?.token))")
-//			print("authTokenRes?.claims: \(String(describing: authTokenRes?.claims))")
-//			print("authTokenRes?.signInProvider: \(String(describing: authTokenRes?.signInProvider))")
-//		})
-//	}
-	
-	override func viewWillAppear(_ animated: Bool) {
-		super.viewWillAppear(animated)
 		setupView()
+		// NOTE: contary to what the FireBase documentation says, we'll stay subscribed to database updates while this vuCon is not on screen. This happens while we add new requests. However, we unsubscribe when the app enters background.
 	}
 	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
+	deinit {
 		tearDownView()
 	}
 	
 	@objc func setupView() {
-		print("setup")
 		// clear tableView data source, re-subscribe to online database updates, which will yield add-events for all entries right away, even if previously displayed
 		store.resetStore()
 		
@@ -92,14 +62,24 @@ class CDRequestsViewController: UIViewController {
 		refreshUITimer?.invalidate()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
 			// delay 3.0 avoids double-firing (if called just a little before the hour, as does happen)
-			guard let nextSixOrNine = Calendar.nextHardDate(onHours: [6, 9]) else { print("no next date"); return }
+			guard let nextSixOrNine = Calendar.nextHardDate(onHours: [6]) else { print("no next date"); return }
 			let timeInterval = nextSixOrNine.timeIntervalSinceNow
-			NSLog("timeInterval: \(String(describing: timeInterval))")
 			self?.refreshUITimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: false) { [weak self] timer in
-				NSLog("timer fires")
-				// at 6 and 9, force refresh of db records. at 6 for expiring soon, at 9 for expired requests
+				NSLog("refreshUITimer fires")
+				// at 6, force tableView reload for expiring soon (when the cells populate expiration is displayed automatically)
+				self?.reqTableVu.reloadData()
+			}
+		}
+		
+		reloadDataTimer?.invalidate()
+		DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+			// delay 3.0 avoids double-firing (if called just a little before the hour, as does happen)
+			guard let nextSixOrNine = Calendar.nextHardDate(onHours: [9]) else { print("no next date"); return }
+			let timeInterval = nextSixOrNine.timeIntervalSinceNow
+			self?.reloadDataTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: false) { [weak self] timer in
+				NSLog("reloadDataTimer fires")
+				// at 9, force refresh of db records, for expired requests
 				self?.requestsRef.removeAllObservers()
-//				self?.callPruneFunction()
 				self?.setupView()
 			}
 		}
@@ -108,7 +88,6 @@ class CDRequestsViewController: UIViewController {
 		let query = requestsRef.queryOrdered(byChild: "expirationDate").queryStarting(atValue: String.upcomingExpirationString())
 		
 		query.observe(.childAdded, with: { [weak self] (snapshot) in
-			print("childAdded") // TODO: loose x 3!
 			// this fires for local and remote edits
 			guard let req = Request(snapshot: snapshot) else { return }
 			
@@ -117,7 +96,6 @@ class CDRequestsViewController: UIViewController {
 		})
 		
 		query.observe(.childChanged, with: { [unowned self] (snapshot) in
-			print("childChanged")
 			// fires for external edits
 			
 			let affectedSectionTitles = self.store.updateWithSnapshot(snapshot)
@@ -125,7 +103,6 @@ class CDRequestsViewController: UIViewController {
 		})
 		
 		query.observe(.childRemoved, with: { [weak self] (snapshot) in
-			print("childRemoved")
 			// fires for external deletions
 			guard let status = self?.store.deleteWithSnapshot(snapshot) else { return }
 			
@@ -143,58 +120,10 @@ class CDRequestsViewController: UIViewController {
 		reqTableVu.reloadData()
 	}
 	
-//	@objc func callPruneFunction() {
-//
-//		// delete expired requests, calling a firebase function
-//
-//		let uDefs = UserDefaults.standard
-//
-////		if let nextPruneDate = uDefs.object(forKey: K.UDefs.nextPruneDate) as? Date {
-////			if nextPruneDate.timeIntervalSinceNow > 2 {
-////				// more than 2 secs left until next prune time
-////				print("not prune time yet: \(nextPruneDate.timeIntervalSinceNow)")
-////				return
-////			}
-////		}
-//		print("past time -> pruning")
-//
-//		DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-//			// timer tends to fire early - delay prevents setting next prune time to something merely seconds away
-//			uDefs.set(Calendar.nextHardDate(onHours: [9]), forKey: K.UDefs.nextPruneDate)
-//		}
-//
-//		guard let user = Auth.auth().currentUser else { return }
-//		user.getIDToken { (inTokenStr, err) in
-//
-//			if let error  = err { print("getTokeError: \(error)"); return }
-//
-//			guard let tokenStr = inTokenStr else { print("no token: \(String(describing: inTokenStr))"); return }
-//
-//			let configuration = URLSessionConfiguration.ephemeral
-//			let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
-//			guard let url = URL(string: "https://us-central1-cuddledispatch-d4299.cloudfunctions.net/pruneExpiredRequests") else { print("url failure"); return }
-//
-//			var request = URLRequest(url: url)
-//			request.addValue("Bearer " + tokenStr, forHTTPHeaderField: "Authorization")
-//
-//			let task = session.dataTask(with: request, completionHandler: { [weak self] (data: Data?, response: URLResponse?, error: Error?) -> Void in
-//				if let resp = response as? HTTPURLResponse {
-//					if resp.statusCode == 200 {
-//						print("pruned OK")
-//					} else {
-//						print("prune resp status: \(resp.statusCode)")
-//					}
-//				}
-//				self?.setupView()
-//			})
-//			task.resume()
-//		}
-//	}
-	
 	@objc func tearDownView() {
-		print("tearDownView")
 		requestsRef.removeAllObservers()
 		refreshUITimer?.invalidate()
+		reloadDataTimer?.invalidate()
 	}
 
 	// MARK: - Navigation for add / edit request
@@ -330,7 +259,6 @@ extension CDRequestsViewController: UITableViewDelegate, UITableViewDataSource {
 			} else {
 				sectionTitles.append(title)
 				sectionTitles.sort()
-				// TODO: check out if whole table reload is ever needed
 			}
 		}
 		
