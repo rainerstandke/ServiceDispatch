@@ -41,37 +41,36 @@ class CDRequestsViewController: UIViewController {
 		
 		
 		
-		
-		// TODO: loose these 2:
-		let tokenButton = UIButton(type: .roundedRect)
-		tokenButton.frame = CGRect(x: 20, y: 80, width: 100, height: 30)
-		tokenButton.setTitle("token", for: [])
-		tokenButton.addTarget(self, action: #selector(logToken), for: .touchUpInside)
-		view.addSubview(tokenButton)
-		
-		let pruneButton = UIButton(type: .roundedRect)
-		pruneButton.frame = CGRect(x: 20, y: 160, width: 100, height: 30)
-		pruneButton.setTitle("prune", for: [])
-		pruneButton.addTarget(self, action: #selector(callPruneFunction), for: .touchUpInside)
-		view.addSubview(pruneButton)
+//		// TODO: loose these 2:
+//		let tokenButton = UIButton(type: .roundedRect)
+//		tokenButton.frame = CGRect(x: 20, y: 80, width: 100, height: 30)
+//		tokenButton.setTitle("token", for: [])
+//		tokenButton.addTarget(self, action: #selector(logToken), for: .touchUpInside)
+//		view.addSubview(tokenButton)
+//		
+//		let pruneButton = UIButton(type: .roundedRect)
+//		pruneButton.frame = CGRect(x: 20, y: 160, width: 100, height: 30)
+//		pruneButton.setTitle("prune", for: [])
+//		pruneButton.addTarget(self, action: #selector(callPruneFunction), for: .touchUpInside)
+//		view.addSubview(pruneButton)
 	}
 	
 	// TODO: loose this
-	@objc func logToken(_ sender: Any?) {
-		guard let user = Auth.auth().currentUser else { return }
-		user.getIDToken { (str, err) in
-			print("str: \(String(describing: str))")
-			print("err: \(String(describing: err))")
-			
-		}
-		user.getIDTokenResult(completion: { (authTokenRes, err) in
-			print("authTokenRes: \(String(describing: authTokenRes))")
-			print("err: \(String(describing: err))")
-			print("authTokenRes?.token: \(String(describing: authTokenRes?.token))")
-			print("authTokenRes?.claims: \(String(describing: authTokenRes?.claims))")
-			print("authTokenRes?.signInProvider: \(String(describing: authTokenRes?.signInProvider))")
-		})
-	}
+//	@objc func logToken(_ sender: Any?) {
+//		guard let user = Auth.auth().currentUser else { return }
+//		user.getIDToken { (str, err) in
+//			print("str: \(String(describing: str))")
+//			print("err: \(String(describing: err))")
+//
+//		}
+//		user.getIDTokenResult(completion: { (authTokenRes, err) in
+//			print("authTokenRes: \(String(describing: authTokenRes))")
+//			print("err: \(String(describing: err))")
+//			print("authTokenRes?.token: \(String(describing: authTokenRes?.token))")
+//			print("authTokenRes?.claims: \(String(describing: authTokenRes?.claims))")
+//			print("authTokenRes?.signInProvider: \(String(describing: authTokenRes?.signInProvider))")
+//		})
+//	}
 	
 	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
@@ -92,8 +91,7 @@ class CDRequestsViewController: UIViewController {
 		
 		refreshUITimer?.invalidate()
 		DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
-			// delay 3.0 avoids double-firing
-			// TODO: make this in the delayed block!
+			// delay 3.0 avoids double-firing (if called just a little before the hour, as does happen)
 			guard let nextSixOrNine = Calendar.nextHardDate(onHours: [6, 9]) else { print("no next date"); return }
 			let timeInterval = nextSixOrNine.timeIntervalSinceNow
 			NSLog("timeInterval: \(String(describing: timeInterval))")
@@ -101,7 +99,7 @@ class CDRequestsViewController: UIViewController {
 				NSLog("timer fires")
 				// at 6 and 9, force refresh of db records. at 6 for expiring soon, at 9 for expired requests
 				self?.requestsRef.removeAllObservers()
-				self?.callPruneFunction()
+//				self?.callPruneFunction()
 				self?.setupView()
 			}
 		}
@@ -145,52 +143,53 @@ class CDRequestsViewController: UIViewController {
 		reqTableVu.reloadData()
 	}
 	
-	@objc func callPruneFunction() {
-		
-		// delete expired requests, calling a firebase function
-		
-		let uDefs = UserDefaults.standard
-
-		if let nextPruneDate = uDefs.object(forKey: K.UDefs.nextPruneDate) as? Date {
-			if nextPruneDate.timeIntervalSinceNow > 2 {
-				// more than 2 secs left until next prune time
-				print("not prune time yet: \(nextPruneDate.timeIntervalSinceNow)")
-				return
-			}
-		}
-		print("past time -> pruning")
-		
-		DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-			// timer tends to fire early - delay prevents setting next prune time to something merely seconds away
-			uDefs.set(Calendar.nextHardDate(onHours: [9]), forKey: K.UDefs.nextPruneDate)
-		}
-		
-		guard let user = Auth.auth().currentUser else { return }
-		user.getIDToken { (inTokenStr, err) in
-			
-			if let error  = err { print("getTokeError: \(error)"); return }
-			
-			guard let tokenStr = inTokenStr else { print("no token: \(String(describing: inTokenStr))"); return }
-			
-			let configuration = URLSessionConfiguration.ephemeral
-			let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
-			guard let url = URL(string: "https://us-central1-cuddledispatch-d4299.cloudfunctions.net/pruneExpiredRequests") else { print("url failure"); return }
-			
-			var request = URLRequest(url: url)
-			request.addValue("Bearer " + tokenStr, forHTTPHeaderField: "Authorization")
-			
-			let task = session.dataTask(with: request, completionHandler: { (data: Data?, response: URLResponse?, error: Error?) -> Void in
-				if let resp = response as? HTTPURLResponse {
-					if resp.statusCode == 200 {
-						print("pruned OK")
-					} else {
-						print("prune resp status: \(resp.statusCode)")
-					}
-				}
-			})
-			task.resume()
-		}
-	}
+//	@objc func callPruneFunction() {
+//
+//		// delete expired requests, calling a firebase function
+//
+//		let uDefs = UserDefaults.standard
+//
+////		if let nextPruneDate = uDefs.object(forKey: K.UDefs.nextPruneDate) as? Date {
+////			if nextPruneDate.timeIntervalSinceNow > 2 {
+////				// more than 2 secs left until next prune time
+////				print("not prune time yet: \(nextPruneDate.timeIntervalSinceNow)")
+////				return
+////			}
+////		}
+//		print("past time -> pruning")
+//
+//		DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+//			// timer tends to fire early - delay prevents setting next prune time to something merely seconds away
+//			uDefs.set(Calendar.nextHardDate(onHours: [9]), forKey: K.UDefs.nextPruneDate)
+//		}
+//
+//		guard let user = Auth.auth().currentUser else { return }
+//		user.getIDToken { (inTokenStr, err) in
+//
+//			if let error  = err { print("getTokeError: \(error)"); return }
+//
+//			guard let tokenStr = inTokenStr else { print("no token: \(String(describing: inTokenStr))"); return }
+//
+//			let configuration = URLSessionConfiguration.ephemeral
+//			let session = URLSession(configuration: configuration, delegate: nil, delegateQueue: OperationQueue.main)
+//			guard let url = URL(string: "https://us-central1-cuddledispatch-d4299.cloudfunctions.net/pruneExpiredRequests") else { print("url failure"); return }
+//
+//			var request = URLRequest(url: url)
+//			request.addValue("Bearer " + tokenStr, forHTTPHeaderField: "Authorization")
+//
+//			let task = session.dataTask(with: request, completionHandler: { [weak self] (data: Data?, response: URLResponse?, error: Error?) -> Void in
+//				if let resp = response as? HTTPURLResponse {
+//					if resp.statusCode == 200 {
+//						print("pruned OK")
+//					} else {
+//						print("prune resp status: \(resp.statusCode)")
+//					}
+//				}
+//				self?.setupView()
+//			})
+//			task.resume()
+//		}
+//	}
 	
 	@objc func tearDownView() {
 		print("tearDownView")
