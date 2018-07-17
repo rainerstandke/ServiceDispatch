@@ -1,5 +1,7 @@
 
-Timer set for 9 am/pm to trigger function to clean database, with lastCleaned date on db, also called at app launch, return fromm background, with local lastCleaned as well
+abandoned calling prune function from app, using cron-job instead
+
+Timer set for 9 am/pm to trigger to reload requests, omitting the (recently) expired ones. Also timer set for refresh UI at 6 am & pm to show will-expire-soon UI.
 
 look @ keyChain for passwords - store & generate
 
@@ -8,11 +10,7 @@ UIRestoration -> scrollPosition x 2, last entries in addEditCon
 local fallback for station list
 
 
-abandoned table sectionIndexTitles - but: possibly add empty string after each title for spacing?? but adds lots of complexity elsewhere
-
 could move inOut status logic into custom view with own nib, like this: https://medium.com/theappspace/swift-custom-uiview-with-xib-file-211bb8bbd6eb
-
-investigate db keepSynched: would that prevent new/added notifs when returning from add/edit vuCon? OTOH: going to / coming from background we need the full monty anyway
 
 priority textField: color background for urgency - call / label "Urgency"??
 
@@ -22,4 +20,3 @@ supress long press on section header (edits first item in section?)
 
 should show something - BG image? - indicating no current requests in table view
 
-lock down http function to our users: https://github.com/firebase/functions-samples/tree/master/authorized-https-endpoint
