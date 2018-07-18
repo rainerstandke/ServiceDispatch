@@ -1,2 +1,2 @@
 # ServiceDispatch
-A proof-of-concept for an iOS app using a FireBase real-tie database. The app dispatches volunteers at a hospital.
+A proof-of-concept for an iOS app using a FireBase real-time database. The app is intended dispatches volunteers at a hospital.
